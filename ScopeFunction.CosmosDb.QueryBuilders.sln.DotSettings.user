@@ -1,0 +1,38 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2818ca48_002D23b9_002D43d8_002Dadb8_002De6c0c9b29165/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.CosmosDb.QueryBuilders.Tests.SelectStatementTests+Select+WithGenericBuilder+WithWhereClause.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7ab47c06_002D5fbf_002D4847_002D8d71_002De475815ed6cf/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #7" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithoutGenericReflectiveBuilder+WithoutGenericParameter+WithoutSelectOptions+WithoutWhereClause.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithAppendSelect+WithSinglePrefix.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=88485cdd_002Db16b_002D4e9c_002D9f7b_002Dc80d2d07e21a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.CosmosDb.QueryBuilders.Tests.SelectStatementTests+Select+WithoutGenericReflectiveBuilder+WithGenericParameter+WithSelectOptions+WithWhereClause+WithTypedSelect.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=95848383_002Deffd_002D4a3c_002Db025_002Dd0ea187c0ced/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b11e0d8d_002D0866_002D4f1f_002Dac85_002D822f3a430c22/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #6" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.CosmosDb.QueryBuilders.Tests.SelectStatementTests+Select+WithoutGenericReflectiveBuilder+WithGenericParameter+WithSelectOptions+WithWhereClause+WithTypedSelect.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e2b4f629_002Debd5_002D48fc_002Da2c6_002D2201c888b477/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithoutGenericReflectiveBuilder+WithoutGenericParameter+WithoutSelectOptions+WithWhereClause&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithoutGenericReflectiveBuilder+WithoutGenericParameter+WithoutSelectOptions+WithoutWhereClause.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e2edb1d8_002D11f2_002D491b_002Dbf3a_002D2e496a77decd/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShouldReturnExpectedStatement #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithAppendSelect+WithSinglePrefix&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
