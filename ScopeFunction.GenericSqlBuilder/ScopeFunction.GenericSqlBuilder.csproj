@@ -10,11 +10,34 @@
         <RepositoryType>github</RepositoryType>
         <PackageProjectUrl>https://github.com/caybokotze/scopefunction.genericsqlbuilder</PackageProjectUrl>
         <RepositoryUrl>https://github.com/caybokotze/scopefunction.genericsqlbuilder</RepositoryUrl>
+        <PackageLicenseFile>license.txt</PackageLicenseFile>
         <Authors>Caybo Kotzé</Authors>
         <Company>Merge Digital</Company>
         <Copyright>A product of Merge Digital</Copyright>
         <Description>A package that offers you the ability to quickly build up Generic sql statements for (MySql, MsSql, CosmosDb and PostgreSql)</Description>
         <PackageTags>SQL Builder, MySql, MsSql, CosmosDb, PostGreSql</PackageTags>
+        <PackageReleaseNotes>Add initial SELECT statement builder</PackageReleaseNotes>
         <PackageVersion>1.0.0-beta</PackageVersion>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="readme.md" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\readme.md">
+            <Pack>true</Pack>
+            <PackagePath>readme.md</PackagePath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="resources\license.txt">
+            <Pack>true</Pack>
+            <PackagePath>license.txt</PackagePath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
