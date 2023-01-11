@@ -15,30 +15,12 @@ public class SelectStatement : Statement
     public SelectStatement(Statement statement, ISelectOptions options) : base(statement, options)
     {
         _options = options;
-
-        if (_options is not SelectOptions so)
-        {
-            throw new InvalidCastException(
-                Errors.SelectOptionCastException);
-        }
-
-        if (so.IsAppendSelect)
-        {
-            Console.WriteLine("Hey there");
-        }
     }
 
-    public SelectStatement Append(Action<SqlBuilder> append)
+    public SelectStatement Append(Action<ISelectStatementBuilder> append)
     {
-        if (_options is not SelectOptions options)
-        {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
-        }
-
-        options.IsAppendSelect = true;
-
-        var sqlBuilder = new SqlBuilder(this, options);
-        append(sqlBuilder);
+        var selectStatementBuilder = new SelectStatementBuilder(this, _options);
+        append(selectStatementBuilder);
         return this;
     }
     
@@ -57,24 +39,27 @@ public class SelectStatement : Statement
         
         if (selectOptions.AppendAfterFrom.Count > 0)
         {
-            foreach (var property in selectOptions.AppendAfterFrom)
+            foreach (var appendableAfterFrom in selectOptions.AppendAfterFrom)
             {
-                if (selectOptions.IgnorePrefix)
+                foreach (var property in appendableAfterFrom.Properties)
                 {
-                    AddStatement($"{property}");
-                    AddStatement(", ");
-                    continue;
-                }
+                    if (selectOptions.IgnorePrefix)
+                    {
+                        AddStatement($"{property}");
+                        AddStatement(", ");
+                        continue;
+                    }
 
-                if (selectOptions.Prefix is not null)
-                {
-                    AddStatement($"{selectOptions.Prefix}.{property}");
-                    AddStatement(", ");
-                    continue;
-                }
+                    if (appendableAfterFrom.Prefix is not null)
+                    {
+                        AddStatement($"{appendableAfterFrom.Prefix}.{property}");
+                        AddStatement(", ");
+                        continue;
+                    }
                 
-                AddStatement($"{table}.{property}");
-                AddStatement(", ");
+                    AddStatement($"{table}.{property}");
+                    AddStatement(", ");
+                }
             }
             
             RemoveLast();

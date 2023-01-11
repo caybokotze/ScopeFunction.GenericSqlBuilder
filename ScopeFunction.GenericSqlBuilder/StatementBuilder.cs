@@ -7,7 +7,7 @@ public static class StatementBuilder
         return statements.Aggregate(string.Empty, (current, statement) => current + statement).TrimEnd(' ');
     }
 
-    public static List<string> GetSelectProperties<T>(SelectOptions options) where T : new()
+    public static List<string> GetSelectProperties<T>(SelectOptions options) where T : class, new()
     {
         var typeProperties = GetSelectProperties<T>();
 
@@ -23,7 +23,7 @@ public static class StatementBuilder
         return typeProperties;
     }
     
-    public static List<string> GetSelectProperties<T>() where T : new ()
+    public static List<string> GetSelectProperties<T>() where T : class, new ()
     {
         var type = typeof(T);
         return type.GetProperties().Select(property => property.Name).ToList();

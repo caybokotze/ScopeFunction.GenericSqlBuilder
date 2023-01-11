@@ -24,18 +24,11 @@ public class Statement : IBuilder
         _selectOptions = new SelectOptions();
         AddStatement(initial);
     }
-    
-    // public Statement(string initial, Statement? statement)
-    // {
-    //     _statements = new List<string>();
-    //     _selectOptions = new SelectOptions();
-    //     AddStatement(initial);
-    // }
-    
-    protected Statement(Statement statement, ISelectOptions selectOptions)
+
+    protected Statement(Statement statement, ISelectOptions options)
     {
         _statements = statement._statements;
-        if (selectOptions is not SelectOptions so)
+        if (options is not SelectOptions so)
         {
             throw new InvalidCastException(Errors.SelectOptionCastException);
         }

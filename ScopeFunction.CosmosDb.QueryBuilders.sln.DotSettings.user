@@ -4,6 +4,12 @@
     &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.CosmosDb.QueryBuilders.Tests.SelectStatementTests+Select+WithGenericBuilder+WithWhereClause.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=35f269ae_002D9fea_002D4060_002Db590_002D54a3387fc8a2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShouldReturnExpectedStatement #8" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithAppendSelect+WithMultipleDifferentPrefixes.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithAppendSelect+WithSinglePrefix.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7ab47c06_002D5fbf_002D4847_002D8d71_002De475815ed6cf/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #7" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithoutGenericReflectiveBuilder+WithoutGenericParameter+WithoutSelectOptions+WithoutWhereClause.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
@@ -26,13 +32,8 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e2b4f629_002Debd5_002D48fc_002Da2c6_002D2201c888b477/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithoutGenericReflectiveBuilder+WithoutGenericParameter+WithoutSelectOptions+WithWhereClause&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithoutGenericReflectiveBuilder+WithoutGenericParameter+WithoutSelectOptions+WithoutWhereClause.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Project Location="C:\code\personal\ScopeFunction.CosmosDb.QueryBuilders\ScopeFunction.GenericSqlBuilder.Tests" Presentation="&amp;lt;ScopeFunction.GenericSqlBuilder.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e2edb1d8_002D11f2_002D491b_002Dbf3a_002D2e496a77decd/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShouldReturnExpectedStatement #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithAppendSelect+WithSinglePrefix&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e2edb1d8_002D11f2_002D491b_002Dbf3a_002D2e496a77decd/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\code\personal\ScopeFunction.CosmosDb.QueryBuilders\ScopeFunction.GenericSqlBuilder.Tests" Presentation="&amp;lt;ScopeFunction.GenericSqlBuilder.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

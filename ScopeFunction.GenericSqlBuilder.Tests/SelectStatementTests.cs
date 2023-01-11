@@ -644,9 +644,20 @@ public class SelectStatementTests
                 public void ShouldReturnExpectedStatement()
                 {
                     // arrange
-                    
+                    var sql = new SqlBuilder()
+                        .Select<Person>(s => s.WithPropertyPrefix("a"))
+                        .Append(a =>
+                            a.Select<Manager>(s => s.WithPropertyPrefix("b")))
+                        .From("people")
+                        .Where(nameof(Person.Age), w =>
+                        {
+                            w.EqualsNumber(50);
+                        })
+                        .Build();
                     // act
+                    const string expected = "SELECT a.FirstName, a.LastName, a.Age, b.RoleId FROM people WHERE b.Age = 50";
                     // assert
+                    Expect(sql).To.Equal(expected);
                 }
             }
         }
