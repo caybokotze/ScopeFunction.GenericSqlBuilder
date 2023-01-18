@@ -17,4 +17,21 @@ public class VariantHelpers
             _ => "LAST_INSERT_ID() "
         };
     }
+
+    public static string GetPropertyVariant(string segment, Variant variant)
+    {
+        return variant switch
+        {
+            Variant.MySql => $"`{segment}`",
+            _ => segment
+        };
+    }
+
+    public static string GetTableVariant(string segment, Variant variant)
+    {
+        return variant switch
+        {
+            _ => segment
+        };
+    }
 }

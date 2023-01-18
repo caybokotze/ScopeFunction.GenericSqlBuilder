@@ -1,11 +1,17 @@
-﻿namespace ScopeFunction.GenericSqlBuilder;
+﻿using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
+using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
+
+namespace ScopeFunction.GenericSqlBuilder;
 
 public enum Casing
 {
     Default,
+    UpperCase,
+    LowerCase,
+    KebabCase,
     PascalCase,
+    SnakeCase,
     CamelCase,
-    SnakeCase
 }
 
 public class SelectStatement : Statement
@@ -45,19 +51,22 @@ public class SelectStatement : Statement
                 {
                     if (selectOptions.IgnorePrefix)
                     {
-                        AddStatement($"{property}");
+                        AddStatement(
+                            $"{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                         AddStatement(", ");
                         continue;
                     }
 
                     if (appendableAfterFrom.Prefix is not null)
                     {
-                        AddStatement($"{appendableAfterFrom.Prefix}.{property}");
+                        AddStatement(
+                            $"{appendableAfterFrom.Prefix}.{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                         AddStatement(", ");
                         continue;
                     }
-                
-                    AddStatement($"{table}.{property}");
+
+                    AddStatement(
+                        $"{table}.{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                     AddStatement(", ");
                 }
             }

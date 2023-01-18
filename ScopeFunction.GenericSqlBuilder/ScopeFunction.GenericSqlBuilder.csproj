@@ -40,4 +40,8 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="PeanutButter.Utils" Version="3.0.96" />
+    </ItemGroup>
 </Project>

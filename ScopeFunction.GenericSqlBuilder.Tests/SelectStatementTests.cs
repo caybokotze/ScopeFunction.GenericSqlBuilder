@@ -661,6 +661,46 @@ public class SelectStatementTests
                 }
             }
         }
+
+        [TestFixture]
+        public class WithCaseConversion
+        {
+            [Test]
+            public void ShouldReturnExpectedStatement()
+            {
+                // arrange
+                var sut = new SqlBuilder()
+                    .Select<Person>(p => new[] {nameof(p.FirstName)}, o => o.WithPropertyPrefix("pe"))
+                    .Build();
+                // act
+                // assert
+            }
+
+            [TestFixture]
+            public class WithAdditiveProperties
+            {
+                
+            }
+
+            [TestFixture]
+            public class WithRemovedProperties
+            {
+                
+            }
+        }
+
+        [TestFixture]
+        public class WithSqlVariants
+        {
+            [Test]
+            public void ShouldReturnExpectedStatements()
+            {
+                // arrange
+                
+                // act
+                // assert
+            }
+        }
     }
 
     [TestFixture]
