@@ -10,7 +10,6 @@ namespace ScopeFunction.GenericSqlBuilder.Tests;
 [Parallelizable(ParallelScope.None)]
 public class SelectStatementTests
 {
-    
     [TestFixture]
     public class Select
     {
@@ -702,6 +701,7 @@ public class SelectStatementTests
                 // arrange
                 var sut = new SqlBuilder()
                     .Select<Person>(p => new[] {nameof(p.FirstName)}, o => o.WithPropertyPrefix("pe"))
+                    .From("people")
                     .Build();
                 // act
                 // assert

@@ -1,11 +1,44 @@
 ﻿namespace ScopeFunction.GenericSqlBuilder;
 
-public class SqlBuilder : ISelectStatementBuilder
+public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder
 {
     public SqlBuilder()
     {
         
     }
+
+    #region INSERT STATEMENTS
+    public InsertStatement Insert(params string[] properties)
+    {
+        return new InsertStatementBuilder().Insert(properties);
+    }
+
+    public InsertStatement Insert(string[] properties, Action<IInsertOptions> options)
+    {
+        return new InsertStatementBuilder().Insert(properties, options);
+    }
+
+    public InsertStatement Insert<T>(Func<T, string[]> properties) where T : class, new()
+    {
+        return new InsertStatementBuilder().Insert(properties);
+    }
+
+    public InsertStatement Insert<T>(Func<T, string[]> properties, Action<IInsertOptions> options) where T : class, new()
+    {
+        return new InsertStatementBuilder().Insert(properties, options);
+    }
+
+    public InsertStatement Insert<T>() where T : class, new()
+    {
+        return new InsertStatementBuilder().Insert<T>();
+    }
+
+    public InsertStatement Insert<T>(Action<IInsertOptions> options) where T : class, new()
+    {
+        return new InsertStatementBuilder().Insert<T>(options);
+    }
+    #endregion
+    
 
     # region SELECT STATEMENTS
     

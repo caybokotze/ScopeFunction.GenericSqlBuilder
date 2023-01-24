@@ -3,31 +3,44 @@ using ScopeFunction.GenericSqlBuilder.Exceptions;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
-public interface IBuilder
-{
-    string Build();
-}
     
-public class Statement : IBuilder
+public class Statement
 {
     private readonly List<string> _statements;
     private readonly SelectOptions _selectOptions;
+    private readonly InsertOptions _insertOptions;
 
     protected Statement()
     {
         _statements = new List<string>();
         _selectOptions = new SelectOptions();
+        _insertOptions = new InsertOptions();
     }
     
     public Statement(string initial)
     {
         _statements = new List<string>();
         _selectOptions = new SelectOptions();
+        _insertOptions = new InsertOptions();
         AddStatement(initial);
+    }
+
+    protected Statement(Statement statement, IInsertOptions options)
+    {
+        _selectOptions = new SelectOptions();
+        _statements = statement._statements;
+        
+        if (options is not InsertOptions io)
+        {
+            throw new InvalidCastException(Errors.InsertOptionCastException);
+        }
+
+        _insertOptions = io;
     }
 
     protected Statement(Statement statement, ISelectOptions options)
     {
+        _insertOptions = new InsertOptions();
         _statements = statement._statements;
         if (options is not SelectOptions so)
         {
@@ -52,8 +65,13 @@ public class Statement : IBuilder
         var lastStatement = _statements[^1];
         _statements[^1] = lastStatement.Trim();
     }
-    
-    public string Build()
+
+    public override string ToString()
+    {
+        return BuildStatement();
+    }
+
+    protected string BuildStatement()
     {
         if (_selectOptions.Variant is Variant.MySql or Variant.MsSql)
         {

@@ -11,21 +11,39 @@ public class OrderByStatement : Statement
         _options = options;
     }
 
-    public Statement Desc()
+    public Finalise Desc()
     {
         AddStatement("DESC ");
-        return this;
+        return new Finalise(this, _options);
     }
 
-    public Statement Asc()
+    public Finalise Asc()
     {
         AddStatement("ASC ");
-        return this;
+        return new Finalise(this, _options);
     }
 
     public OrderByStatement Append(string clause)
     {
         AddStatement($"{clause} ");
         return this;
+    }
+}
+
+public class Finalise : Statement
+{
+    public Finalise(Statement statement, ISelectOptions options) : base(statement, options)
+    {
+        
+    }
+
+    public Finalise(Statement statement, IInsertOptions options) : base(statement, options)
+    {
+        
+    }
+    
+    public string Build()
+    {
+        return BuildStatement();
     }
 }

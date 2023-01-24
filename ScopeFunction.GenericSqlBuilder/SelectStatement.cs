@@ -14,7 +14,14 @@ public class SelectStatement : Statement
 
     public SelectStatement Append(Action<ISelectStatementBuilder> append)
     {
-        var selectStatementBuilder = new SelectStatementBuilder(this, _options);
+        if (_options is not SelectOptions selectOptions)
+        {
+            throw new InvalidCastException(Errors.SelectOptionCastException);
+        }
+
+        selectOptions.IsAppendSelect = true;
+        
+        var selectStatementBuilder = new SelectStatementBuilder(this, selectOptions);
         append(selectStatementBuilder);
         return this;
     }

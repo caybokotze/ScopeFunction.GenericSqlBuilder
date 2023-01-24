@@ -11,14 +11,14 @@ public static class StatementBuilder
     {
         var typeProperties = GetSelectProperties<T>();
 
-        foreach (var item in options.WithoutProperties
+        foreach (var item in options.RemovedProperties
                      .Where(item => typeProperties
                          .Contains(item, StringComparer.CurrentCultureIgnoreCase)))
         {
             typeProperties.Remove(item);
         }
 
-        typeProperties.AddRange(options.WithProperties);
+        typeProperties.AddRange(options.AddedProperties);
 
         return typeProperties;
     }

@@ -22,6 +22,11 @@ public class FromStatement : Statement
         _options = options;
         _whereOptions = whereOptions;
     }
+    
+    public string Build()
+    {
+        return BuildStatement();
+    }
 
     private static string GetPrefixAndClause(string clause, string prefix)
     {

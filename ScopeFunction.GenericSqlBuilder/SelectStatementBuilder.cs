@@ -12,7 +12,7 @@ public interface ISelectStatementBuilder
 
 public class SelectStatementBuilder : Statement, ISelectStatementBuilder
 {
-    private readonly ISelectOptions? _options;
+    private readonly ISelectOptions _options;
 
     public SelectStatementBuilder(Statement statement, ISelectOptions options) : base(statement, options)
     {
@@ -21,12 +21,17 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
     
     public SelectStatementBuilder()
     {
-        
+        _options = new SelectOptions();
     }
 
     public SelectStatement Select(string[] properties)
     {
-        if (_options is null)
+        if (_options is not SelectOptions so)
+        {
+            throw new InvalidCastException(Errors.SelectOptionCastException);
+        }
+        
+        if (!so.IsAppendSelect)
         {
             AddStatement("SELECT ");
             return new SelectStatement(this, new SelectOptions
@@ -37,19 +42,19 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
                 }
             });
         }
-        
-        if (_options is not SelectOptions so)
-        {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
-        }
-        
+
         so.AppendAfterFrom.Add(new AppendableAfterFrom(properties, so.Prefix));
         return new SelectStatement(this, so);
     }
     
     public SelectStatement Select(string[] properties, Action<ISelectOptions> options)
     {
-        if (_options is null)
+        if (_options is not SelectOptions so)
+        {
+            throw new InvalidCastException(Errors.SelectOptionCastException);
+        }
+        
+        if (!so.IsAppendSelect)
         {
             var selectOptions = new SelectOptions();
             options(selectOptions);
@@ -67,11 +72,6 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
         }
         
         options(_options);
-        
-        if (_options is not SelectOptions so)
-        {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
-        }
 
         so.AppendAfterFrom.Add(new AppendableAfterFrom(properties, so.Prefix));
 
@@ -80,7 +80,12 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
 
     public SelectStatement Select<T>(Func<T, string[]> properties) where T : class, new()
     {
-        if (_options is null)
+        if (_options is not SelectOptions so)
+        {
+            throw new InvalidCastException(Errors.SelectOptionCastException);
+        }
+        
+        if (!so.IsAppendSelect)
         {
             AddStatement("SELECT ");
 
@@ -94,20 +99,19 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
                 }
             });
         }
-        
-        if (_options is not SelectOptions so)
-        {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
-        }
-        
-        
+
         so.AppendAfterFrom.Add(new AppendableAfterFrom(properties(new T()), so.Prefix));
         return new SelectStatement(this, so);
     }
     
     public SelectStatement Select<T>(Func<T, string[]> properties, Action<ISelectOptions> options) where T : class, new()
     {
-        if (_options is null)
+        if (_options is not SelectOptions so)
+        {
+            throw new InvalidCastException(Errors.SelectOptionCastException);
+        }
+        
+        if (!so.IsAppendSelect)
         {
             var selectOptions = new SelectOptions();
             options(selectOptions);
@@ -126,19 +130,20 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
 
         options(_options);
 
-        if (_options is not SelectOptions so)
-        {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
-        }
-
         so.AppendAfterFrom.Add(new AppendableAfterFrom(properties(new T()), so.Prefix));
         return new SelectStatement(this, so);
     }
     
     public SelectStatement Select<T>() where T : class, new ()
     {
+        if (_options is not SelectOptions so)
+        {
+            throw new InvalidCastException(Errors.SelectOptionCastException);
+        }
+        
         var properties = StatementBuilder.GetSelectProperties<T>();
-        if (_options is null)
+        
+        if (!so.IsAppendSelect)
         {
             var selectOptions = new SelectOptions
             {
@@ -152,18 +157,18 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
             return new SelectStatement(this, selectOptions);
         }
 
-        if (_options is not SelectOptions so)
-        {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
-        }
-        
         so.AppendAfterFrom.Add(new AppendableAfterFrom(properties.ToArray(), so.Prefix));
         return new SelectStatement(this, so);
     }
 
     public SelectStatement Select<T>(Action<ISelectOptions> options) where T : class, new()
     {
-        if (_options is null)
+        if (_options is not SelectOptions so)
+        {
+            throw new InvalidCastException(Errors.SelectOptionCastException);
+        }
+        
+        if (!so.IsAppendSelect)
         {
             var selectOptions = new SelectOptions();
             options(selectOptions);
@@ -187,11 +192,6 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
 
         options(_options);
 
-        if (_options is not SelectOptions so)
-        {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
-        }
-        
         so.AppendAfterFrom.Add(new AppendableAfterFrom(StatementBuilder.GetSelectProperties<T>(so).ToArray(), so.Prefix));
         return new SelectStatement(this, so);
     }

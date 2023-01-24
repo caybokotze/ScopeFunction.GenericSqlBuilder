@@ -8,7 +8,7 @@ public static class GenericSqlBuilder
     {
         var sqlBuilder = new SqlBuilder();
         var statement = builder(sqlBuilder);
-        return statement.Build();
+        return statement.ToString();
     }
     
     public static void Configure(Action<IGenericSqlBuilderConfiguration> configuration)

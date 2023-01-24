@@ -14,6 +14,11 @@ public class WhereStatement : Statement
         _options = options;
     }
 
+    public string Build()
+    {
+        return BuildStatement();
+    }
+
     public FromStatement And()
     {
         AddStatement("AND ");

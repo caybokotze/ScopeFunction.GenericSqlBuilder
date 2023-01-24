@@ -9,40 +9,25 @@ public interface ISelectOptions : IOptions
     ISelectOptions WithPropertyCasing(Casing casing);
     ISelectOptions WithProperty(string property);
     ISelectOptions WithoutProperty(string property);
+    ISelectOptions WithProperties(IEnumerable<string> properties);
+    ISelectOptions WithoutProperties(IEnumerable<string> properties);
     ISelectOptions WithTop(int value);
-}
-
-public class AppendableAfterFrom
-{
-    public AppendableAfterFrom(string[] properties)
-    {
-        Properties = properties;
-    }
-    
-    public AppendableAfterFrom(string[] properties, string? prefix)
-    {
-        Properties = properties;
-        Prefix = prefix;
-    }
-    
-    public string[] Properties { get; }
-    public string? Prefix { get; }
 }
 
 public class SelectOptions : Options, ISelectOptions
 {
     public SelectOptions()
     {
-        WithProperties = new List<string>();
-        WithoutProperties = new List<string>();
+        AddedProperties = new List<string>();
+        RemovedProperties = new List<string>();
         AppendAfterFrom = new List<AppendableAfterFrom>();
         var configuration = GenericQueryBuilderSettings.GenericSqlBuilderConfiguration;
         Variant = configuration.Variant;
         PropertyCase = configuration.Casing;
     }
     
-    public List<string> WithProperties { get; }
-    public List<string> WithoutProperties { get; }
+    public List<string> AddedProperties { get; }
+    public List<string> RemovedProperties { get; }
     public Casing PropertyCase { get; private set; }
         
     public Variant Variant { get; private set; }
@@ -51,6 +36,7 @@ public class SelectOptions : Options, ISelectOptions
         
     public List<AppendableAfterFrom> AppendAfterFrom { get; set; }
     public bool IsAppendWhere { get; set; }
+    public bool IsAppendSelect { get; set; }
 
     public ISelectOptions WithPropertyCasing(Casing casing)
     {
@@ -66,16 +52,28 @@ public class SelectOptions : Options, ISelectOptions
 
     public ISelectOptions WithProperty(string property)
     {
-        WithProperties.Add(property);
+        AddedProperties.Add(property);
         return this;
     }
 
     public ISelectOptions WithoutProperty(string property)
     {
-        WithoutProperties.Add(property);
+        RemovedProperties.Add(property);
         return this;
     }
-        
+
+    public ISelectOptions WithProperties(IEnumerable<string> properties)
+    {
+        AddedProperties.AddRange(properties);
+        return this;
+    }
+
+    public ISelectOptions WithoutProperties(IEnumerable<string> properties)
+    {
+        RemovedProperties.AddRange(properties);
+        return this;
+    }
+
     public ISelectOptions WithTop(int value)
     {
         TopValue = value;
