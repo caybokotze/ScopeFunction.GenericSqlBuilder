@@ -5,6 +5,7 @@ namespace ScopeFunction.GenericSqlBuilder;
 
 public interface ISelectOptions : IOptions
 {
+    ISelectOptions WithSqlVariant(Variant variant);
     ISelectOptions WithPropertyCasing(Casing casing);
     ISelectOptions WithProperty(string property);
     ISelectOptions WithoutProperty(string property);
@@ -24,8 +25,8 @@ public class AppendableAfterFrom
         Prefix = prefix;
     }
     
-    public string[] Properties { get; set; }
-    public string? Prefix { get; set; }
+    public string[] Properties { get; }
+    public string? Prefix { get; }
 }
 
 public class SelectOptions : Options, ISelectOptions
@@ -35,7 +36,7 @@ public class SelectOptions : Options, ISelectOptions
         WithProperties = new List<string>();
         WithoutProperties = new List<string>();
         AppendAfterFrom = new List<AppendableAfterFrom>();
-        var configuration = GenericQueryBuilderSettings.Configuration;
+        var configuration = GenericQueryBuilderSettings.GenericSqlBuilderConfiguration;
         Variant = configuration.Variant;
         PropertyCase = configuration.Casing;
     }

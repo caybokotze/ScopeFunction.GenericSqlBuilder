@@ -15,7 +15,7 @@ public class WhereCondition : Statement
     /// <param name="clause"></param>
     public void Equals(string clause)
     {
-        AddStatement($"{clause} ");
+        AddStatement($"= {clause} ");
     }
 
     /// <summary>

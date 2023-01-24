@@ -23,6 +23,7 @@ public class VariantHelpers
         return variant switch
         {
             Variant.MySql => $"`{segment}`",
+            Variant.MsSql => $"[{segment}]",
             _ => segment
         };
     }

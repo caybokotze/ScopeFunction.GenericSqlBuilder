@@ -1,5 +1,7 @@
 ﻿using ScopeFunction.GenericSqlBuilder.Common;
 using ScopeFunction.GenericSqlBuilder.Exceptions;
+using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
+using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
@@ -84,6 +86,12 @@ public class FromStatement : Statement
     }
 
     # region JOINING
+    public JoinStatement Join(string clause)
+    {
+        AddStatement($"JOIN {clause} ");
+        return new JoinStatement(this, _options);
+    }
+    
     public JoinStatement LeftJoin(string clause)
     {
         AddStatement($"LEFT JOIN {clause} ");
@@ -227,22 +235,25 @@ public class FromStatement : Statement
     /// The explicit where will not inherit any options set on SELECT. It will just add the statement added verbatim.
     /// </summary>
     /// <param name="clause"></param>
+    /// <param name="applyPrefix"></param>
     /// <returns></returns>
-    public WhereStatement Where(string clause)
+    public WhereStatement Where(string clause, bool applyPrefix = false)
     {
         if (_options is not SelectOptions selectOptions)
         {
             throw new InvalidCastException(
                 Errors.SelectOptionCastException);
         }
+        
+        var prefix = Helpers.GetPrefix(new WhereOptions(), _options);
 
         switch (selectOptions.IsAppendWhere)
         {
             case false:
-                AddStatement($"WHERE {clause} ");
+                AddStatement(applyPrefix && !string.IsNullOrEmpty(prefix) ? $"WHERE {prefix}.{clause}" : $"WHERE {clause} ");
                 break;
             case true:
-                AddStatement($"{clause} ");
+                AddStatement(applyPrefix && !string.IsNullOrEmpty(prefix) ? $"{prefix}.{clause}" : $"{clause} ");
                 break;
         }
 
@@ -251,6 +262,12 @@ public class FromStatement : Statement
 
     public WhereStatement Where(string clause, Action<WhereCondition> condition)
     {
+        if (_options is not SelectOptions selectOptions)
+        {
+            throw new InvalidCastException(
+                Errors.SelectOptionCastException);
+        }
+        
         var whereOptions = new WhereOptions();
         var prefix = Helpers.GetPrefix(new WhereOptions(), _options);
         
@@ -258,13 +275,14 @@ public class FromStatement : Statement
         
         if (!string.IsNullOrEmpty(prefix))
         {
-            AddStatement($"{prefix}.{clause} ");
+            AddStatement($"{prefix}.{GetPropertyVariant(ConvertCase(clause, selectOptions.PropertyCase), selectOptions.Variant)} ");
         }
 
         if (string.IsNullOrEmpty(prefix))
         {
-            AddStatement($"{clause} ");
+            AddStatement($"{GetPropertyVariant(ConvertCase(clause, selectOptions.PropertyCase), selectOptions.Variant)} ");
         }
+        
         var whereCondition = new WhereCondition(this, _options);
         condition(whereCondition);
         return new WhereStatement(this, _options);
@@ -305,5 +323,6 @@ public class FromStatement : Statement
         AddWhereClauses(clauses, whereOptions);
         return new WhereStatement(this, _options);
     }
+    
     #endregion
 }

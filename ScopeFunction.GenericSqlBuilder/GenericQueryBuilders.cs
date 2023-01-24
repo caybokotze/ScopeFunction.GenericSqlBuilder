@@ -11,11 +11,11 @@ public static class GenericSqlBuilder
         return statement.Build();
     }
     
-    public static void Configure(Action<IConfiguration> configuration)
+    public static void Configure(Action<IGenericSqlBuilderConfiguration> configuration)
     {
-        var configurationInstance = new Configuration();
+        var configurationInstance = new GenericSqlBuilderConfiguration();
         configuration(configurationInstance);
-        GenericQueryBuilderSettings.Configuration = configurationInstance;
+        GenericQueryBuilderSettings.GenericSqlBuilderConfiguration = configurationInstance;
     }
 }
 
@@ -23,30 +23,30 @@ internal static class GenericQueryBuilderSettings
 {
     static GenericQueryBuilderSettings()
     {
-        Configuration = new Configuration();
+        GenericSqlBuilderConfiguration = new GenericSqlBuilderConfiguration();
     }
     
-    public static Configuration Configuration { get; set; }
+    public static GenericSqlBuilderConfiguration GenericSqlBuilderConfiguration { get; set; }
 }
 
-public interface IConfiguration
+public interface IGenericSqlBuilderConfiguration
 {
-    IConfiguration WithDefaultPropertyCase(Casing casing);
-    IConfiguration WithDefaultSqlVariant(Variant variant);
+    IGenericSqlBuilderConfiguration WithDefaultPropertyCase(Casing casing);
+    IGenericSqlBuilderConfiguration WithDefaultSqlVariant(Variant variant);
 }
 
-internal class Configuration : IConfiguration
+internal class GenericSqlBuilderConfiguration : IGenericSqlBuilderConfiguration
 {
     public Casing Casing { get; private set; }
     public Variant Variant { get; private set; }
     
-    public IConfiguration WithDefaultPropertyCase(Casing casing)
+    public IGenericSqlBuilderConfiguration WithDefaultPropertyCase(Casing casing)
     {
         Casing = casing;
         return this;
     }
 
-    public IConfiguration WithDefaultSqlVariant(Variant variant)
+    public IGenericSqlBuilderConfiguration WithDefaultSqlVariant(Variant variant)
     {
         Variant = variant;
         return this;

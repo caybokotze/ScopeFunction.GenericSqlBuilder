@@ -1,13 +1,16 @@
 using NExpect;
 using NUnit.Framework;
+using ScopeFunction.GenericSqlBuilder.Enums;
 using ScopeFunction.GenericSqlBuilder.Exceptions;
 using static NExpect.Expectations;
 
 namespace ScopeFunction.GenericSqlBuilder.Tests;
 
 [TestFixture]
+[Parallelizable(ParallelScope.None)]
 public class SelectStatementTests
 {
+    
     [TestFixture]
     public class Select
     {
@@ -150,6 +153,32 @@ public class SelectStatementTests
                             Expect(sut).To.Equal(expected);
                         }
                     }
+                    
+                    [TestFixture]
+                    public class WithAppendedJoin
+                    {
+                        [Test]
+                        public void ShouldReturnExpectedStatement()
+                        {
+                            // arrange
+                            var sut = new SqlBuilder()
+                                .Select<Person>()
+                                .From("c")
+                                .Join("d")
+                                .On("d.c_id = c.id")
+                                .Where<Person>(p => new[]
+                                {
+                                    $"{nameof(p.Age)} = 18",
+                                    $"{nameof(p.Age)} = 20"
+                                }, w => w.WithAndSeparator())
+                                .Build();
+                            // act
+                            const string expected =
+                                "SELECT c.FirstName, c.LastName, c.Age FROM c JOIN d ON d.c_id = c.id WHERE c.Age = 18 AND c.Age = 20";
+                            // assert
+                            Expect(sut).To.Equal(expected);
+                        }
+                    }
                 }
 
                 [TestFixture]
@@ -170,7 +199,7 @@ public class SelectStatementTests
                     }
 
                     [TestFixture]
-                    public class WithAppendedJoin
+                    public class WithAppendedJoins
                     {
                         [Test]
                         public void ShouldReturnExpectedStatement()
@@ -185,9 +214,11 @@ public class SelectStatementTests
                                 .On("o.q_id = q.id")
                                 .RightJoin("r")
                                 .On("r.o_id = o.id")
+                                .Join("u")
+                                .On("u.r_id = r.id")
                                 .Build();
                             // act
-                            const string expected = "SELECT p.FirstName, p.LastName, p.Age FROM p LEFT JOIN q ON q.p_id = p.id INNER JOIN o ON o.q_id = q.id RIGHT JOIN r ON r.o_id = o.id";
+                            const string expected = "SELECT p.FirstName, p.LastName, p.Age FROM p LEFT JOIN q ON q.p_id = p.id INNER JOIN o ON o.q_id = q.id RIGHT JOIN r ON r.o_id = o.id JOIN u ON u.r_id = r.id";
                             // assert
                             Expect(expected).To.Equal(sut);
                         }
@@ -1620,9 +1651,45 @@ public class SelectStatementTests
     }
 
     [TestFixture]
-    public class AlternativeCombinations
+    public class VariantTesting
     {
+        [TestFixture]
+        public class WithMySqlVariant
+        {
+            [Test]
+            public void ShouldReturnExpectedStatement()
+            {
+                // arrange
+                var sql = new SqlBuilder()
+                    .Select<Person>(o => o.WithSqlVariant(Variant.MySql))
+                    .From("people")
+                    .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                    .Build();
+                // act
+                var expected = "SELECT people.`FirstName`, people.`LastName`, people.`Age` FROM people WHERE people.`FirstName` = \'John\';";
+                // assert
+                Expect(sql).To.Equal(expected);
+            }
+        }
         
+        [TestFixture]
+        public class WithMsSqlVariant
+        {
+            [Test]
+            public void ShouldReturnExpectedStatement()
+            {
+                // arrange
+                var sql = new SqlBuilder()
+                    .Select<Person>(o => o.WithSqlVariant(Variant.MsSql))
+                    .From("people")
+                    .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                    .Build();
+                // act
+                const string expected = "SELECT people.[FirstName], people.[LastName], people.[Age] FROM people WHERE people.[FirstName] = \'John\';";
+                // assert
+                Expect(sql).To.Equal(expected);
+            }
+        }
     }
 }
 

@@ -1,3 +1,4 @@
+using ScopeFunction.GenericSqlBuilder.Enums;
 using ScopeFunction.GenericSqlBuilder.Exceptions;
 
 namespace ScopeFunction.GenericSqlBuilder;
@@ -54,10 +55,14 @@ public class Statement : IBuilder
     
     public string Build()
     {
+        if (_selectOptions.Variant is Variant.MySql or Variant.MsSql)
+        {
+            TrimLast();
+            AddStatement(";");
+        }
+        
         var statement = StatementBuilder.Build(_statements);
-        
-        
-        
+
         return statement;
     }
 }

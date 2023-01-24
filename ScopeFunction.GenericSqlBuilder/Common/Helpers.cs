@@ -12,7 +12,7 @@ public static class Helpers
                 Errors.SelectOptionCastException);
         }
 
-        if (whereOptions.IgnorePrefix && whereOptions.Prefix is not null)
+        if (whereOptions is {IgnorePrefix: true, Prefix: not null})
         {
             throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed);
         }

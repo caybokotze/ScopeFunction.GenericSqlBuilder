@@ -3,17 +3,6 @@ using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
-public enum Casing
-{
-    Default,
-    UpperCase,
-    LowerCase,
-    KebabCase,
-    PascalCase,
-    SnakeCase,
-    CamelCase,
-}
-
 public class SelectStatement : Statement
 {
     private readonly ISelectOptions _options;

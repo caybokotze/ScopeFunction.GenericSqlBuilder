@@ -1,4 +1,5 @@
 ﻿using PeanutButter.Utils;
+using ScopeFunction.GenericSqlBuilder.Enums;
 
 namespace ScopeFunction.GenericSqlBuilder.Common;
 
