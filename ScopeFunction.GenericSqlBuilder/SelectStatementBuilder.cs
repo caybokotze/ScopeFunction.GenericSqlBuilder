@@ -19,7 +19,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
         _options = options;
     }
     
-    public SelectStatementBuilder()
+    public SelectStatementBuilder() : base(new Statement(string.Empty), new SelectOptions())
     {
         _options = new SelectOptions();
     }

@@ -1651,6 +1651,27 @@ public class SelectStatementTests
     }
 
     [TestFixture]
+    public class WithAppendAfterFrom
+    {
+        [Test]
+        public void ShouldReturnExpectedResult()
+        {
+            // arrange
+            var sql = new SqlBuilder()
+                .Select<Person>()
+                .From("people")
+                .Append("JOIN t FROM j")
+                .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                .Build();
+            // act
+            const string expected = "SELECT people.FirstName, people.LastName, people.Age FROM people JOIN t FROM j WHERE people.FirstName = 'John'";
+            // assert
+
+            Expect(sql).To.Equal(expected);
+        }
+    }
+
+    [TestFixture]
     public class VariantTesting
     {
         [TestFixture]

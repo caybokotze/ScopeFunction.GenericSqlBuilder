@@ -5,7 +5,7 @@ using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
-public class FromStatement : Statement
+public class FromStatement : Statement, IBuildable
 {
     private readonly ISelectOptions _options;
     private readonly WhereOptions? _whereOptions;
@@ -88,6 +88,12 @@ public class FromStatement : Statement
                 AddStatement($"{GetSeparationClause(whereOptions)} ");
                 break;
         }
+    }
+
+    public FromStatement Append(string clause)
+    {
+        AddStatement($"{clause} ");
+        return this;
     }
 
     # region JOINING

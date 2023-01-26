@@ -17,7 +17,7 @@
         <Description>A package that offers you the ability to quickly build up Generic sql statements for (MySql, MsSql, CosmosDb and PostgreSql)</Description>
         <PackageTags>SQL Builder, MySql, MsSql, CosmosDb, PostGreSql</PackageTags>
         <PackageReleaseNotes>Add initial SELECT statement builder</PackageReleaseNotes>
-        <PackageVersion>1.0.0-beta</PackageVersion>
+        <PackageVersion>1.0.2-beta</PackageVersion>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 

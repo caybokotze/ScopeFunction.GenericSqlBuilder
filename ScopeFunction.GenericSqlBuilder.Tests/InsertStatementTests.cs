@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using NExpect;
+using NUnit.Framework;
+using static NExpect.Expectations;
 
 namespace ScopeFunction.GenericSqlBuilder.Tests;
 
@@ -62,8 +64,9 @@ public class InsertStatementTests
                     .Into("c")
                     .Build();
                 // act
-                var expected = "INSERT INTO people (FirstName, LastName, Age) VALUES (@FirstName, @LastName, @Age)";
+                const string expected = "INSERT INTO people (FirstName, LastName, Age) VALUES (@FirstName, @LastName, @Age)";
                 // assert
+                Expect(sql).To.Equal(expected);
             }
         }
     }

@@ -3,31 +3,56 @@ using ScopeFunction.GenericSqlBuilder.Exceptions;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
+public interface IBuildable
+{
+    string Build();
+}
+
+public enum StatementType
+{
+    Select,
+    Insert,
+    Update,
+    Delete
+}
     
 public class Statement
 {
     private readonly List<string> _statements;
     private readonly SelectOptions _selectOptions;
     private readonly InsertOptions _insertOptions;
+    private readonly IUpdateOptions _updateOptions;
+    private readonly StatementType _statementType;
 
-    protected Statement()
-    {
-        _statements = new List<string>();
-        _selectOptions = new SelectOptions();
-        _insertOptions = new InsertOptions();
-    }
-    
     public Statement(string initial)
     {
         _statements = new List<string>();
         _selectOptions = new SelectOptions();
         _insertOptions = new InsertOptions();
+        _updateOptions = new UpdateOptions();
         AddStatement(initial);
+    }
+
+    protected Statement(Statement statement, IUpdateOptions options)
+    {
+        _statementType = StatementType.Update;
+        _selectOptions = new SelectOptions();
+        _insertOptions = new InsertOptions();
+        _statements = statement._statements;
+
+        if (options is not UpdateOptions uo)
+        {
+            throw new InvalidCastException(Errors.InsertOptionCastException);
+        }
+
+        _updateOptions = uo;
     }
 
     protected Statement(Statement statement, IInsertOptions options)
     {
+        _statementType = StatementType.Insert;
         _selectOptions = new SelectOptions();
+        _updateOptions = new UpdateOptions();
         _statements = statement._statements;
         
         if (options is not InsertOptions io)
@@ -40,8 +65,11 @@ public class Statement
 
     protected Statement(Statement statement, ISelectOptions options)
     {
+        _statementType = StatementType.Select;
         _insertOptions = new InsertOptions();
+        _updateOptions = new UpdateOptions();
         _statements = statement._statements;
+        
         if (options is not SelectOptions so)
         {
             throw new InvalidCastException(Errors.SelectOptionCastException);
@@ -73,7 +101,8 @@ public class Statement
 
     protected string BuildStatement()
     {
-        if (_selectOptions.Variant is Variant.MySql or Variant.MsSql)
+        if (_statementType == StatementType.Select
+            && _selectOptions.Variant is Variant.MySql or Variant.MsSql)
         {
             TrimLast();
             AddStatement(";");

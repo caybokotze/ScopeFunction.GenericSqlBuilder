@@ -1,12 +1,14 @@
 ﻿namespace ScopeFunction.GenericSqlBuilder;
 
-public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder
+public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpdateStatementBuilder
 {
-    public SqlBuilder()
+    #region UPDATE STATEMENT
+    public UpdateStatement Update(string table)
     {
-        
+        return new UpdateStatementBuilder().Update(table);
     }
-
+    #endregion
+    
     #region INSERT STATEMENTS
     public InsertStatement Insert(params string[] properties)
     {
@@ -37,6 +39,7 @@ public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder
     {
         return new InsertStatementBuilder().Insert<T>(options);
     }
+    
     #endregion
     
 

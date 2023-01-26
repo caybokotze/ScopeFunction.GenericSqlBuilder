@@ -3,7 +3,7 @@ using ScopeFunction.GenericSqlBuilder.Common;
 namespace ScopeFunction.GenericSqlBuilder;
 
 
-public class WhereStatement : Statement
+public class WhereStatement : Statement, IBuildable
 {
     private readonly ISelectOptions _options;
     
