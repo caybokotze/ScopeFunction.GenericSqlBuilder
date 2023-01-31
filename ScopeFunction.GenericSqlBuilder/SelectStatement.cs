@@ -47,22 +47,19 @@ public class SelectStatement : Statement
                 {
                     if (selectOptions.IgnorePrefix)
                     {
-                        AddStatement(
-                            $"{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
+                        AddStatement($"{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                         AddStatement(", ");
                         continue;
                     }
 
                     if (appendableAfterFrom.Prefix is not null)
                     {
-                        AddStatement(
-                            $"{appendableAfterFrom.Prefix}.{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
+                        AddStatement($"{appendableAfterFrom.Prefix}.{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                         AddStatement(", ");
                         continue;
                     }
 
-                    AddStatement(
-                        $"{table}.{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
+                    AddStatement($"{table}.{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                     AddStatement(", ");
                 }
             }

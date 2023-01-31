@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using NExpect;
+using NUnit.Framework;
+using ScopeFunction.GenericSqlBuilder.Enums;
+using static NExpect.Expectations;
 
 namespace ScopeFunction.GenericSqlBuilder.Tests;
 
@@ -11,14 +14,67 @@ public class UpdateStatementTests
         [TestFixture]
         public class WithOptions
         {
-            [Test]
-            public void ShouldReturnExpectedStatement()
+            [TestFixture]
+            public class WithAppendProperty
             {
-                // arrange
-                var sql = new SqlBuilder()
-                    .Update("");
-                // act
-                // assert
+                [Test]
+                public void ShouldReturnExpectedStatement()
+                {
+                    // arrange
+                    var sql = new SqlBuilder()
+                        .Update<Person>("people", o => o.WithProperty("Foo"))
+                        .Set()
+                        .Where("Id = 21")
+                        .Build();
+                    // act
+                    const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName, Age = @Age, Foo = @Foo WHERE Id = 21";
+                    // assert
+                    Expect(sql).To.Equal(expected);
+                }
+            }
+
+            [TestFixture]
+            public class WithoutProperty
+            {
+                [Test]
+                public void ShouldReturnExpectedStatement()
+                {
+                    // arrange
+                    var sql = new SqlBuilder()
+                        .Update<Person>("people", o => o.WithoutProperty("Foo"))
+                        .Set()
+                        .Where("Id = 21")
+                        .Build();
+                    // act
+                    const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName, Age = @Age WHERE Id = 21";
+                    // assert
+                    Expect(sql).To.Equal(expected);
+                }
+            }
+
+            [TestFixture]
+            public class WithUppercaseProperty
+            {
+                [Test]
+                public void ShouldReturnExpectedStatement()
+                {
+                    // arrange
+                    var sql = new SqlBuilder()
+                        .Update<Person>("people", o => o.WithPropertyCasing(Casing.UpperCase))
+                        .Set()
+                        .Where("Id = 21")
+                        .Build();
+                    // act
+                    const string expected = "UPDATE people SET FIRSTNAME = @FirstName, LASTNAME = @LastName, AGE = @Age WHERE Id = 21";
+                    // assert
+                    Expect(sql).To.Equal(expected);
+                }
+            }
+
+            [TestFixture]
+            public class WithSnakeCaseProperty
+            {
+                
             }
         }
 
@@ -29,9 +85,15 @@ public class UpdateStatementTests
             public void ShouldReturnExpectedStatement()
             {
                 // arrange
-                
+                var sql = new SqlBuilder()
+                    .Update<Person>("people")
+                    .Set()
+                    .Where("Id = 21")
+                    .Build();
                 // act
+                const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName, Age = @Age WHERE Id = 21";
                 // assert
+                Expect(sql).To.Equal(expected);
             }
         }
     }
@@ -59,9 +121,15 @@ public class UpdateStatementTests
             public void ShouldReturnExpectedStatement()
             {
                 // arrange
-                
+                var sql = new SqlBuilder()
+                    .Update("people")
+                    .Set("FirstName = @FirstName")
+                    .Where("Id = 21")
+                    .Build();
                 // act
+                const string expected = "UPDATE people SET FirstName = @FirstName WHERE Id = 21";
                 // assert
+                Expect(sql).To.Equal(expected);
             }
         }
     }

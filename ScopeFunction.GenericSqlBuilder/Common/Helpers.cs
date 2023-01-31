@@ -31,9 +31,3 @@ public static class Helpers
     }
 }
 
-public class Options
-{
-    public bool IgnorePrefix { get; set; }
-    public string? Prefix { get; set; }
-}
-

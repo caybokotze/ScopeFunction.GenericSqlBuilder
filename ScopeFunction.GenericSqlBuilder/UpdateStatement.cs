@@ -1,72 +1,85 @@
 using System.Runtime.CompilerServices;
+using ScopeFunction.GenericSqlBuilder.Common;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
 public class UpdateStatement : Statement
 {
+    private readonly IUpdateOptions _options;
+
     public UpdateStatement(Statement statement, IUpdateOptions options) : base(statement, options)
     {
-        
-    }
-
-    public UpdateWhereCondition Set(string clause)
-    {
-        return new UpdateWhereCondition(this, new UpdateOptions());
-    }
-
-    public UpdateWhereCondition Set(string[] properties)
-    {
-        return new UpdateWhereCondition(this, new UpdateOptions());
-    }
-
-    public UpdateWhereCondition Set(string[] properties, Action<IUpdateStatementBuilder> options)
-    {
-        return new UpdateWhereCondition(this, new UpdateOptions());
-    }
-
-    public UpdateWhereCondition Set<T>(Func<T, string[]> properties) where T : class, new()
-    {
-        return new UpdateWhereCondition(this, new UpdateOptions());
-    }
-
-    public UpdateWhereCondition Set<T>(Func<T, string[]> properties, Action<IUpdateOptions> options) where T : class, new()
-    {
-        return new UpdateWhereCondition(this, new UpdateOptions());
+        _options = options;
     }
     
-    public UpdateWhereCondition Set<T>(Action<IUpdateOptions> options) where T : class, new()
+    /// <summary>
+    /// Verbatim Set. No specified options will be set.
+    /// </summary>
+    /// <param name="clause"></param>
+    /// <returns></returns>
+    public UpdateWhereCondition Set(string clause)
     {
-        return new UpdateWhereCondition(this, new UpdateOptions());
+        AddStatement($"SET {clause} ");
+        return new UpdateWhereCondition(this, _options);
     }
 
-    public UpdateWhereCondition Set<T>() where T : class, new()
+    /// <summary>
+    /// Supports an array of properties. If any options were provided, they will be applied.
+    /// </summary>
+    /// <param name="properties"></param>
+    /// <returns></returns>
+    public UpdateWhereCondition Set(string[] properties)
     {
-        return new UpdateWhereCondition(this, new UpdateOptions());
+        return new UpdateWhereCondition(this, _options);
     }
 }
 
-public class UpdateWhereCondition : Statement, IBuildable
+
+public class UpdateStatement<T> : Statement where T : new()
 {
     private readonly IUpdateOptions _options;
 
-    public UpdateWhereCondition(Statement statement, IUpdateOptions options) : base(statement, options)
+    public UpdateStatement(Statement statement, IUpdateOptions options) : base(statement, options)
     {
         _options = options;
     }
 
-    public UpdateWhereCondition Where(string clause, bool applyPrefix = false)
+    
+    /// <summary>
+    /// Supports an array with type assisting. Will apply options if they were provided
+    /// </summary>
+    /// <param name="properties"></param>
+    /// <returns></returns>
+    public UpdateWhereCondition Set(Func<T, string[]> properties)
     {
-        if (_options is not UpdateOptions updateOptions)
+        AddStatement("SET ");
+        foreach (var segment in properties.Invoke(new T()))
+        {
+            AddStatement($"{segment} = @{segment} ");
+        }
+        
+        return new UpdateWhereCondition(this, _options);
+    }
+
+    public UpdateWhereCondition Set()
+    {
+        if (_options is not UpdateOptions uo)
         {
             throw new InvalidCastException(Errors.UpdateOptionCastException);
         }
         
-        AddStatement($"WHERE {clause} ");
-        return this;
-    }
-    
-    public string Build()
-    {
-        throw new NotImplementedException();
+        AddStatement("SET ");
+        var segments = StatementBuilder.GetUpdateProperties<T>(uo);
+
+        foreach (var segment in segments)
+        {
+            AddStatement(
+                $"{VariantHelpers.GetPropertyVariant(CaseConverter.ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
+        }
+        
+        TrimLast(true);
+        AddStatement(" ");
+        
+        return new UpdateWhereCondition(this, _options);
     }
 }

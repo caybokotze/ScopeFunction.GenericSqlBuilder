@@ -18,6 +18,13 @@ public interface IInsertOptions : IOptions
 
 public class InsertOptions : IInsertOptions
 {
+    public InsertOptions()
+    {
+        AfterInto = Array.Empty<string>().ToList();
+    }
+    
+    public List<string> AfterInto { get; set; }
+    
     public void WithPropertyPrefix(string prefix)
     {
         throw new NotImplementedException();

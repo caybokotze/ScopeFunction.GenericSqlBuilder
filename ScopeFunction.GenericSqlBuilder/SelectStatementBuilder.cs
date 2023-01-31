@@ -141,7 +141,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
             throw new InvalidCastException(Errors.SelectOptionCastException);
         }
         
-        var properties = StatementBuilder.GetSelectProperties<T>();
+        var properties = StatementBuilder.GetPropertyNames<T>();
         
         if (!so.IsAppendSelect)
         {

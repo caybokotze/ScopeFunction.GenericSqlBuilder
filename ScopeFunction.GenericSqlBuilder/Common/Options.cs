@@ -21,3 +21,9 @@ public interface IOptions
     /// </example>
     public void WithoutPropertyPrefix();
 }
+
+public class Options
+{
+    public bool IgnorePrefix { get; set; }
+    public string? Prefix { get; set; }
+}

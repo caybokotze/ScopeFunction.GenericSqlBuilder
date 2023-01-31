@@ -7,6 +7,22 @@ public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpd
     {
         return new UpdateStatementBuilder().Update(table);
     }
+    
+    public UpdateStatement Update(string table, Action<IUpdateOptions> options)
+    {
+        return new UpdateStatementBuilder().Update(table, options);
+    }
+
+    public UpdateStatement<T> Update<T>(string table) where T : new()
+    {
+        return new UpdateStatementBuilder().Update<T>(table);
+    }
+
+    public UpdateStatement<T> Update<T>(string table, Action<IUpdateOptions> options) where T : new()
+    {
+        return new UpdateStatementBuilder().Update<T>(table, options);
+    }
+
     #endregion
     
     #region INSERT STATEMENTS

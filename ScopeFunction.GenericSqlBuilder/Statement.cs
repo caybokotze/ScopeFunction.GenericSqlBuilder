@@ -88,10 +88,14 @@ public class Statement
         _statements.RemoveAt(_statements.Count-1);
     }
 
-    protected void TrimLast()
+    protected void TrimLast(bool trimEndComma = false)
     {
-        var lastStatement = _statements[^1];
-        _statements[^1] = lastStatement.Trim();
+        _statements[^1] = _statements[^1].Trim();
+
+        if (trimEndComma)
+        {
+            _statements[^1] = _statements[^1].TrimEnd(',');
+        }
     }
 
     public override string ToString()
