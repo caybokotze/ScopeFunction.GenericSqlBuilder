@@ -41,6 +41,11 @@ public class Finalise : Statement
     {
         
     }
+
+    public Finalise(Statement statement, IUpdateOptions options) : base(statement, options)
+    {
+        
+    }
     
     public string Build()
     {

@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
-using ScopeFunction.GenericSqlBuilder.Common;
+using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
+using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
@@ -13,24 +14,24 @@ public class UpdateStatement : Statement
     }
     
     /// <summary>
-    /// Verbatim Set. No specified options will be set.
+    /// Verbatim Set. If options were provided they will not take effect.
     /// </summary>
     /// <param name="clause"></param>
     /// <returns></returns>
-    public UpdateWhereCondition Set(string clause)
+    public UpdateSetStatement Set(string clause)
     {
         AddStatement($"SET {clause} ");
-        return new UpdateWhereCondition(this, _options);
+        return new UpdateSetStatement(this, _options);
     }
 
     /// <summary>
-    /// Supports an array of properties. If any options were provided, they will be applied.
+    /// Supports an array of properties. If options were provided they will be applied.
     /// </summary>
     /// <param name="properties"></param>
     /// <returns></returns>
-    public UpdateWhereCondition Set(string[] properties)
+    public UpdateSetStatement Set(string[] properties)
     {
-        return new UpdateWhereCondition(this, _options);
+        return new UpdateSetStatement(this, _options);
     }
 }
 
@@ -46,22 +47,32 @@ public class UpdateStatement<T> : Statement where T : new()
 
     
     /// <summary>
-    /// Supports an array with type assisting. Will apply options if they were provided
+    /// Supports an array with type assisting. If options were provided they will be applied.
     /// </summary>
     /// <param name="properties"></param>
     /// <returns></returns>
-    public UpdateWhereCondition Set(Func<T, string[]> properties)
+    public UpdateSetStatement Set(Func<T, string[]> properties)
     {
+        if (_options is not UpdateOptions uo)
+        {
+            throw new InvalidCastException(Errors.UpdateOptionCastException);
+        }
+        
         AddStatement("SET ");
         foreach (var segment in properties.Invoke(new T()))
         {
-            AddStatement($"{segment} = @{segment} ");
+            AddStatement($"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment} ");
         }
         
-        return new UpdateWhereCondition(this, _options);
+        return new UpdateSetStatement(this, _options);
     }
 
-    public UpdateWhereCondition Set()
+    /// <summary>
+    /// Will only build up properties reflectively. If options were provided they will be applied.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="InvalidCastException"></exception>
+    public UpdateSetStatement Set()
     {
         if (_options is not UpdateOptions uo)
         {
@@ -74,12 +85,12 @@ public class UpdateStatement<T> : Statement where T : new()
         foreach (var segment in segments)
         {
             AddStatement(
-                $"{VariantHelpers.GetPropertyVariant(CaseConverter.ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
+                $"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
         }
         
         TrimLast(true);
         AddStatement(" ");
         
-        return new UpdateWhereCondition(this, _options);
+        return new UpdateSetStatement(this, _options);
     }
 }

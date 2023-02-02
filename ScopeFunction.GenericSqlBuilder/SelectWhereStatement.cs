@@ -3,11 +3,11 @@ using ScopeFunction.GenericSqlBuilder.Common;
 namespace ScopeFunction.GenericSqlBuilder;
 
 
-public class WhereStatement : Statement, IBuildable
+public class SelectWhereStatement : Statement, IBuildable
 {
     private readonly ISelectOptions _options;
     
-    public WhereStatement(
+    public SelectWhereStatement(
         Statement statement, 
         ISelectOptions options) : base(statement, options)
     {
@@ -39,7 +39,7 @@ public class WhereStatement : Statement, IBuildable
         return new FromStatement(this, options, whereOptions);
     }
     
-    public WhereStatement And(string clause)
+    public SelectWhereStatement And(string clause)
     {
         AddStatement($"AND {clause} ");
         return this;
@@ -65,13 +65,13 @@ public class WhereStatement : Statement, IBuildable
         return new FromStatement(this, options, whereOptions);
     }
     
-    public WhereStatement Or(string clause)
+    public SelectWhereStatement Or(string clause)
     {
         AddStatement($"OR {clause} ");
         return this;
     }
 
-    public WhereStatement In(params string[] clause)
+    public SelectWhereStatement In(params string[] clause)
     {
         AddStatement($"IN ({string.Join(", ", clause)})");
         return this;
@@ -171,7 +171,7 @@ public class WhereStatement : Statement, IBuildable
     }
     # endregion
 
-    public WhereStatement Append(Action<FromStatement> statement)
+    public SelectWhereStatement Append(Action<FromStatement> statement)
     {
         if (_options is not SelectOptions options)
         {
@@ -185,7 +185,7 @@ public class WhereStatement : Statement, IBuildable
         return this;
     }
     
-    public WhereStatement Append(string clause)
+    public SelectWhereStatement Append(string clause)
     {
         AddStatement($"{clause} ");
         return this;

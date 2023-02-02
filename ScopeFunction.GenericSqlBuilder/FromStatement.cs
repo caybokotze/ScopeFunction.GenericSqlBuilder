@@ -129,7 +129,7 @@ public class FromStatement : Statement, IBuildable
     /// <param name="clauses"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public WhereStatement Where(IEnumerable<string> clauses, Action<IWhereOptions> options)
+    public SelectWhereStatement Where(IEnumerable<string> clauses, Action<IWhereOptions> options)
     {
         var whereOptions = new WhereOptions();
         options(whereOptions);
@@ -143,7 +143,7 @@ public class FromStatement : Statement, IBuildable
         {
             AddWhereOrSeparator(whereOptions);
             AddWhereClauses(clauses, whereOptions);
-            return new WhereStatement(this, _options);
+            return new SelectWhereStatement(this, _options);
         }
 
         switch (selectOptions.IsAppendWhere)
@@ -161,16 +161,16 @@ public class FromStatement : Statement, IBuildable
         TrimLast();
         AddStatement(") ");
 
-        return new WhereStatement(this, _options);
+        return new SelectWhereStatement(this, _options);
     }
 
-    public WhereStatement NestedWhere(Action<FromStatement> nestedWhere)
+    public SelectWhereStatement NestedWhere(Action<FromStatement> nestedWhere)
     {
         var fromStatement = new FromStatement(this, _options);
         AddStatement("( ");
         nestedWhere(fromStatement);
         AddStatement(") ");
-        return new WhereStatement(this, _options);
+        return new SelectWhereStatement(this, _options);
     }
     
     /// <summary>
@@ -184,7 +184,7 @@ public class FromStatement : Statement, IBuildable
     /// <param name="options"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public WhereStatement Where<T>(Func<T, string[]> clause, Action<IWhereOptions> options) where T : new()
+    public SelectWhereStatement Where<T>(Func<T, string[]> clause, Action<IWhereOptions> options) where T : new()
     {
         var clauses = clause(new T());
         var whereOptions = new WhereOptions();
@@ -200,7 +200,7 @@ public class FromStatement : Statement, IBuildable
         {
             AddWhereOrSeparator(whereOptions);
             AddWhereClauses(clauses, whereOptions);
-            return new WhereStatement(this, _options);
+            return new SelectWhereStatement(this, _options);
         }
 
         switch (selectOptions.IsAppendWhere)
@@ -217,7 +217,7 @@ public class FromStatement : Statement, IBuildable
         AddWhereClauses(clauses, whereOptions);
         TrimLast();
         AddStatement(") ");
-        return new WhereStatement(this, _options);
+        return new SelectWhereStatement(this, _options);
     }
     #endregion
 
@@ -233,13 +233,13 @@ public class FromStatement : Statement, IBuildable
     /// <param name="clause"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public WhereStatement Where<T>(Func<T, string[]> clause) where T : new()
+    public SelectWhereStatement Where<T>(Func<T, string[]> clause) where T : new()
     {
         var clauses = clause(new T());
         var whereOptions = new WhereOptions();
         AddWhereOrSeparator(whereOptions);
         AddWhereClauses(clauses, whereOptions);
-        return new WhereStatement(this, _options);
+        return new SelectWhereStatement(this, _options);
     }
     
     /// <summary>
@@ -248,7 +248,7 @@ public class FromStatement : Statement, IBuildable
     /// <param name="clause"></param>
     /// <param name="applyPrefix"></param>
     /// <returns></returns>
-    public WhereStatement Where(string clause, bool applyPrefix = false)
+    public SelectWhereStatement Where(string clause, bool applyPrefix = false)
     {
         if (_options is not SelectOptions selectOptions)
         {
@@ -268,10 +268,10 @@ public class FromStatement : Statement, IBuildable
                 break;
         }
 
-        return new WhereStatement(this, _options);
+        return new SelectWhereStatement(this, _options);
     }
 
-    public WhereStatement Where(string clause, Action<WhereCondition> condition)
+    public SelectWhereStatement Where(string clause, Action<SelectWhereCondition> condition)
     {
         if (_options is not SelectOptions selectOptions)
         {
@@ -294,12 +294,12 @@ public class FromStatement : Statement, IBuildable
             AddStatement($"{GetPropertyVariant(ConvertCase(clause, selectOptions.PropertyCase), selectOptions.Variant)} ");
         }
         
-        var whereCondition = new WhereCondition(this, _options);
+        var whereCondition = new SelectWhereCondition(this, _options);
         condition(whereCondition);
-        return new WhereStatement(this, _options);
+        return new SelectWhereStatement(this, _options);
     }
 
-    public WhereStatement Where<T>(Func<T, string> clause, Action<WhereCondition> condition) where T : new()
+    public SelectWhereStatement Where<T>(Func<T, string> clause, Action<SelectWhereCondition> condition) where T : new()
     {
         var whereOptions = new WhereOptions();
         var prefix = Helpers.GetPrefix(whereOptions, _options);
@@ -317,9 +317,9 @@ public class FromStatement : Statement, IBuildable
             AddStatement($"{clauseSegment} ");
         }
         
-        var whereCondition = new WhereCondition(this, _options);
+        var whereCondition = new SelectWhereCondition(this, _options);
         condition(whereCondition);
-        return new WhereStatement(this, _options);
+        return new SelectWhereStatement(this, _options);
     }
     
     /// <summary>
@@ -327,12 +327,12 @@ public class FromStatement : Statement, IBuildable
     /// </summary>
     /// <param name="clauses"></param>
     /// <returns></returns>
-    public WhereStatement Where(IEnumerable<string> clauses)
+    public SelectWhereStatement Where(IEnumerable<string> clauses)
     {
         var whereOptions = new WhereOptions();
         AddWhereOrSeparator(whereOptions);
         AddWhereClauses(clauses, whereOptions);
-        return new WhereStatement(this, _options);
+        return new SelectWhereStatement(this, _options);
     }
     
     #endregion

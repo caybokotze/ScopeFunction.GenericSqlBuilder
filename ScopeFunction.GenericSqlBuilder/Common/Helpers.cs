@@ -4,7 +4,7 @@ namespace ScopeFunction.GenericSqlBuilder.Common;
 
 public static class Helpers
 {
-    public static string GetPrefix(Options whereOptions, ISelectOptions options)
+    public static string GetPrefix(Options rootOptions, ISelectOptions options)
     {
         if (options is not SelectOptions selectOptions)
         {
@@ -12,17 +12,17 @@ public static class Helpers
                 Errors.SelectOptionCastException);
         }
 
-        if (whereOptions is {IgnorePrefix: true, Prefix: not null})
+        if (rootOptions is {IgnorePrefix: true, Prefix: not null})
         {
             throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed);
         }
         
-        if (whereOptions.Prefix is not null)
+        if (rootOptions.Prefix is not null)
         {
-            return whereOptions.Prefix;
+            return rootOptions.Prefix;
         }
 
-        if (whereOptions.IgnorePrefix || selectOptions.IgnorePrefix)
+        if (rootOptions.IgnorePrefix || selectOptions.IgnorePrefix)
         {
             return string.Empty;
         }

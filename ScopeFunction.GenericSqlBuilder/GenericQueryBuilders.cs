@@ -26,7 +26,7 @@ internal static class GenericQueryBuilderSettings
         GenericSqlBuilderConfiguration = new GenericSqlBuilderConfiguration();
     }
     
-    public static GenericSqlBuilderConfiguration GenericSqlBuilderConfiguration { get; set; }
+    public static GenericSqlBuilderConfiguration GenericSqlBuilderConfiguration { internal get; set; }
 }
 
 public interface IGenericSqlBuilderConfiguration

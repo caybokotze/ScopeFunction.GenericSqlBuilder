@@ -24,6 +24,10 @@ public class UpdateOptions : Options, IUpdateOptions
     {
         RemovedProperties = Enumerable.Empty<string>().ToList();
         AddedProperties = Enumerable.Empty<string>().ToList();
+        
+        var configuration = GenericQueryBuilderSettings.GenericSqlBuilderConfiguration;
+        Variant = configuration.Variant;
+        PropertyCase = configuration.Casing;
     }
     
     public List<string> RemovedProperties { get; private set; }

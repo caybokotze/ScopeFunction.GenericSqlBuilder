@@ -8,6 +8,7 @@ public interface IBuildable
     string Build();
 }
 
+
 public enum StatementType
 {
     Select,
@@ -21,7 +22,7 @@ public class Statement
     private readonly List<string> _statements;
     private readonly SelectOptions _selectOptions;
     private readonly InsertOptions _insertOptions;
-    private readonly IUpdateOptions _updateOptions;
+    private readonly UpdateOptions _updateOptions;
     private readonly StatementType _statementType;
 
     public Statement(string initial)
@@ -107,6 +108,13 @@ public class Statement
     {
         if (_statementType == StatementType.Select
             && _selectOptions.Variant is Variant.MySql or Variant.MsSql)
+        {
+            TrimLast();
+            AddStatement(";");
+        }
+        
+        if (_statementType == StatementType.Update
+            && _updateOptions.Variant is Variant.MsSql or Variant.MsSql)
         {
             TrimLast();
             AddStatement(";");
