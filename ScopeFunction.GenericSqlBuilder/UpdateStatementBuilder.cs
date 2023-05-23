@@ -24,7 +24,12 @@ public class UpdateStatementBuilder : Statement, IUpdateStatementBuilder
     public UpdateStatement Update(string table, Action<IUpdateOptions> options)
     {
         AddStatement($"UPDATE {table} ");
-        var updateOptions = new UpdateOptions();
+        
+        var updateOptions = new UpdateOptions
+        {
+            Prefix = table
+        };
+        
         options(updateOptions);
         return new UpdateStatement(this, updateOptions);
     }
@@ -32,13 +37,21 @@ public class UpdateStatementBuilder : Statement, IUpdateStatementBuilder
     public UpdateStatement<T> Update<T>(string table) where T : new()
     {
         AddStatement($"UPDATE {table} ");
-        return new UpdateStatement<T>(this, new UpdateOptions());
+        return new UpdateStatement<T>(this, new UpdateOptions
+        {
+            Prefix = table
+        });
     }
     
     public UpdateStatement<T> Update<T>(string table, Action<IUpdateOptions> options) where T : new()
     {
         AddStatement($"UPDATE {table} ");
-        var updateOptions = new UpdateOptions();
+        
+        var updateOptions = new UpdateOptions
+        {
+            Prefix = table
+        };
+        
         options(updateOptions);
         return new UpdateStatement<T>(this, updateOptions);
     }

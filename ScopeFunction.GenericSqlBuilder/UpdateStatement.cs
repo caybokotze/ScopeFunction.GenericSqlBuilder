@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using ScopeFunction.GenericSqlBuilder.Common;
 using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
 using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
 
@@ -29,8 +30,20 @@ public class UpdateStatement : Statement
     /// </summary>
     /// <param name="properties"></param>
     /// <returns></returns>
-    public UpdateSetStatement Set(string[] properties)
+    public UpdateSetStatement Set(IEnumerable<string> properties)
     {
+        if (_options is not UpdateOptions uo)
+        {
+            throw new InvalidCastException(Errors.UpdateOptionCastException);
+        }
+        
+        AddStatement("SET ");
+        
+        foreach (var segment in properties)
+        {
+            AddStatement($"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment} ");
+        }
+        
         return new UpdateSetStatement(this, _options);
     }
 }
@@ -85,7 +98,7 @@ public class UpdateStatement<T> : Statement where T : new()
         foreach (var segment in segments)
         {
             AddStatement(
-                $"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
+                $"{Helpers.GetPrefix(uo)}{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
         }
         
         TrimLast(true);

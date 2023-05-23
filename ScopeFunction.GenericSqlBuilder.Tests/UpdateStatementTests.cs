@@ -41,12 +41,12 @@ public class UpdateStatementTests
                 {
                     // arrange
                     var sql = new SqlBuilder()
-                        .Update<Person>("people", o => o.WithoutProperty("Foo"))
+                        .Update<Person>("people", o => o.WithoutProperty(nameof(Person.FirstName)))
                         .Set()
                         .Where("Id = 21")
                         .Build();
                     // act
-                    const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName, Age = @Age WHERE Id = 21";
+                    const string expected = "UPDATE people SET LastName = @LastName, Age = @Age WHERE Id = 21";
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
@@ -63,9 +63,10 @@ public class UpdateStatementTests
                         .Update<Person>("people", o => o.WithPropertyCasing(Casing.UpperCase))
                         .Set()
                         .Where("Id = 21")
+                        .Append("AND last_name = 'John'")
                         .Build();
                     // act
-                    const string expected = "UPDATE people SET FIRSTNAME = @FirstName, LASTNAME = @LastName, AGE = @Age WHERE Id = 21";
+                    const string expected = "UPDATE people SET FIRSTNAME = @FirstName, LASTNAME = @LastName, AGE = @Age WHERE Id = 21 AND last_name = 'John'";
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
@@ -79,7 +80,11 @@ public class UpdateStatementTests
                 {
                     // arrange
                     var sql = new SqlBuilder()
-                        .Update<Person>("people", o => o.WithPropertyCasing(Casing.SnakeCase))
+                        .Update<Person>("people", o =>
+                        {
+                            o.WithPropertyCasing(Casing.SnakeCase);
+                            o.WithoutPropertyPrefix();
+                        })
                         .Set()
                         .Where("Id = 21")
                         .Build();
@@ -103,12 +108,13 @@ public class UpdateStatementTests
                             o.WithPropertyCasing(Casing.SnakeCase);
                             o.WithProperty("Foo");
                             o.WithoutProperty("Age");
+                            o.WithPropertyPrefix("p");
                         })
                         .Set()
                         .Where("Id = 21")
                         .Build();
                     // act
-                    const string expected = "UPDATE people SET first_name = @FirstName, last_name = @LastName, foo = @Foo WHERE Id = 21";
+                    const string expected = "UPDATE people SET p.first_name = @FirstName, p.last_name = @LastName, p.foo = @Foo WHERE Id = 21";
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
@@ -180,13 +186,36 @@ public class UpdateStatementTests
         [TestFixture]
         public class WithOptions
         {
-            [Test]
-            public void ShouldReturnExpectedStatement()
+            [TestFixture]
+            public class WithNormalArray
             {
-                // arrange
+                [Test]
+                public void ShouldReturnExpectedStatement()
+                {
+                    // arrange
+                    var sql = new SqlBuilder()
+                        .Update("people p", o =>
+                        {
+                            o.WithPropertyPrefix("p");
+                            o.WithPropertyCasing(Casing.SnakeCase);
+                        })
+                        .Set(new []
+                        {
+                            nameof(Person.FirstName)
+                        })
+                        .Where("Id = 21")
+                        .Build();
+                    // act
+                    const string expected = "UPDATE people SET first_name = @FirstName WHERE Id = 21";
+                    // assert
+                    Expect(sql).To.Equal(expected);
+                }
+            }
+
+            [TestFixture]
+            public class WithGenericArray
+            {
                 
-                // act
-                // assert
             }
 
             [TestFixture]

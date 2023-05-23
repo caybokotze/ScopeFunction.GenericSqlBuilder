@@ -29,5 +29,36 @@ public static class Helpers
 
         return selectOptions.Prefix ?? string.Empty;
     }
+
+    public static string GetPrefix(ISelectOptions selectOptions, string? table = null)
+    {
+        if (selectOptions is not SelectOptions so)
+        {
+            throw new InvalidCastException(Errors.SelectOptionCastException);
+        }
+
+        return so switch
+        {
+            {IgnorePrefix: true, Prefix: not null} => throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed),
+            {IgnorePrefix: false, Prefix: null} when table is not null => $"{table}.",
+            _ => so.Prefix is not null ? $"{so.Prefix}." : string.Empty
+        };
+    }
+
+    public static string GetPrefix(IUpdateOptions updateOptions)
+    {
+        if (updateOptions is not UpdateOptions uo)
+        {
+            throw new InvalidCastException(
+                Errors.SelectOptionCastException);
+        }
+
+        if (uo is {IgnorePrefix: true, Prefix: not null})
+        {
+            throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed);
+        }
+
+        return uo.Prefix is not null ? $"{uo.Prefix}." : string.Empty;
+    }
 }
 

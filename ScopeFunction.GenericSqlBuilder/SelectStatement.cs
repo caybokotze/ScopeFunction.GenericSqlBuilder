@@ -1,4 +1,5 @@
 ﻿using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
+using static ScopeFunction.GenericSqlBuilder.Common.Helpers;
 using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
 
 namespace ScopeFunction.GenericSqlBuilder;
@@ -45,21 +46,7 @@ public class SelectStatement : Statement
             {
                 foreach (var property in appendableAfterFrom.Properties)
                 {
-                    if (selectOptions.IgnorePrefix)
-                    {
-                        AddStatement($"{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
-                        AddStatement(", ");
-                        continue;
-                    }
-
-                    if (appendableAfterFrom.Prefix is not null)
-                    {
-                        AddStatement($"{appendableAfterFrom.Prefix}.{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
-                        AddStatement(", ");
-                        continue;
-                    }
-
-                    AddStatement($"{table}.{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
+                    AddStatement($"{GetPrefix(selectOptions, table)}{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                     AddStatement(", ");
                 }
             }
