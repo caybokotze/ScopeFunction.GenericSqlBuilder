@@ -48,5 +48,10 @@
     &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+SelectAll+WithWhereClause+WithOptions+GenericArrayWhere+WithPrefix+AndConditionalIf.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.UpdateStatementTests+WithGenericBuilder+WithOptions+WithoutProperty.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.InsertStatementTests+WithoutGenericBuilder+WithOptions.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithGenericReflectiveBuilder+WithSelectOptions+WithWhereClause+WithWhereOptions+WithWherePrefix.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+SelectAll+WithWhereClause+WithOptions+GenericArrayWhere+WithPrefix+AndConditionalIf.IfConditionalStatementIsFalse&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+SelectAll+WithWhereClause+WithOptions+GenericArrayWhere+WithPrefix+AndConditionalIf+WhenConditionIsTrue&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+SelectAll+WithWhereClause+WithOptions+GenericArrayWhere+WithPrefix+AndConditionalIf&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

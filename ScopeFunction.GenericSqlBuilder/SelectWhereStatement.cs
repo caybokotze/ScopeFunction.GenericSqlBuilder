@@ -171,7 +171,7 @@ public class SelectWhereStatement : Statement, IBuildable
     }
     # endregion
 
-    public SelectWhereStatement Append(Action<FromStatement> statement)
+    public SelectWhereStatement AppendWhere(Action<FromStatement> statement)
     {
         if (_options is not SelectOptions options)
         {
@@ -185,18 +185,39 @@ public class SelectWhereStatement : Statement, IBuildable
         return this;
     }
 
-    public SelectWhereStatement AppendIf(Func<bool> condition, string clause)
+    public SelectWhereStatement AppendWhereIf(Func<bool> condition, Action<FromStatement> statement)
     {
-        if (condition())
+        var outcome = condition();
+        if (!outcome)
         {
-            AddStatement($"{clause} ");
+            return this;
         }
         
+        if (_options is not SelectOptions options)
+        {
+            throw new InvalidCastException(
+                Errors.SelectOptionCastException);
+        }
+
+        statement(new FromStatement(this, options));
         return this;
     }
     
     public SelectWhereStatement Append(string clause)
     {
+        AddStatement($"{clause} ");
+        return this;
+    }
+    
+    public SelectWhereStatement AppendIf(Func<bool> condition, string clause)
+    {
+        var outcome = condition();
+
+        if (!outcome)
+        {
+            return this;
+        }
+        
         AddStatement($"{clause} ");
         return this;
     }

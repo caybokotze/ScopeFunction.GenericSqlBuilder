@@ -13,7 +13,7 @@ public class SelectStatement : Statement
         _options = options;
     }
 
-    public SelectStatement Append(Action<ISelectStatementBuilder> append)
+    public SelectStatement AppendSelect(Action<ISelectStatementBuilder> append)
     {
         if (_options is not SelectOptions selectOptions)
         {
@@ -46,7 +46,7 @@ public class SelectStatement : Statement
             {
                 foreach (var property in appendableAfterFrom.Properties)
                 {
-                    AddStatement($"{GetPrefix(selectOptions, table)}{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
+                    AddStatement($"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                     AddStatement(", ");
                 }
             }

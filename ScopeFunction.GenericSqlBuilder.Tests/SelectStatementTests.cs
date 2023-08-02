@@ -655,7 +655,7 @@ public class SelectStatementTests
                     // arrange
                     var sql = new SqlBuilder()
                         .Select<Person>(s => s.WithoutPropertyPrefix())
-                        .Append(a =>
+                        .AppendSelect(a =>
                             a.Select<Manager>(s => s.WithoutPropertyPrefix()))
                         .From("people")
                         .Where(nameof(Person.Age), w => w.EqualsNumber(50))
@@ -676,7 +676,7 @@ public class SelectStatementTests
                     // arrange
                     var sql = new SqlBuilder()
                         .Select<Person>(s => s.WithPropertyPrefix("a"))
-                        .Append(a =>
+                        .AppendSelect(a =>
                             a.Select<Manager>(s => s.WithPropertyPrefix("b")))
                         .From("people")
                         .Where(nameof(Person.Age), w =>
@@ -1014,6 +1014,78 @@ public class SelectStatementTests
                     [TestFixture]
                     public class WithAppend
                     {
+                        [TestFixture]
+                        public class WithAppendWhereIf
+                        {
+                            [TestFixture]
+                            public class WhenOutcomeIsTrue
+                            {
+                                [Test]
+                                public void ShouldReturnExpectedStatement()
+                                {
+                                    // arrange
+                                    var sql = new SqlBuilder()
+                                        .SelectAll()
+                                        .From("c")
+                                        .Where(new[]
+                                        {
+                                            $"{nameof(Person.FirstName)} = 'John'",
+                                            $"{nameof(Person.LastName)} = 'Watson'"
+                                        }, w => { w.WithAndSeparator(); })
+                                        .AppendWhere(f =>
+                                            f.Where(new[]
+                                            {
+                                                $"{nameof(Person.LastName)} = 'Fredrick'"
+                                            }))
+                                        .AppendWhereIf(() => 5 > 1, f =>
+                                            f.Where<Person>(p => new[]
+                                            {
+                                                $"{nameof(p.FirstName)} = 'Jack'"
+                                            }, o => o.WithAndSeparator()))
+                                        .Build();
+                                    // act
+                                    var expected =
+                                        "SELECT * FROM c WHERE c.FirstName = 'John' AND c.LastName = 'Watson' OR c.LastName = 'Fredrick' AND c.FirstName = 'Jack'";
+                                    // assert
+                                    Expect(sql).To.Equal(expected);
+                                }
+                            }
+
+                            [TestFixture]
+                            public class WhenOutcomeIsFalse
+                            {
+                                [Test]
+                                public void ShouldReturnExpectedStatement()
+                                {
+                                    // arrange
+                                    var sql = new SqlBuilder()
+                                        .SelectAll()
+                                        .From("c")
+                                        .Where(new[]
+                                        {
+                                            $"{nameof(Person.FirstName)} = 'John'",
+                                            $"{nameof(Person.LastName)} = 'Watson'"
+                                        }, w => { w.WithAndSeparator(); })
+                                        .AppendWhere(f =>
+                                            f.Where(new[]
+                                            {
+                                                $"{nameof(Person.LastName)} = 'Fredrick'"
+                                            }))
+                                        .AppendWhereIf(() => 5 > 10, f =>
+                                            f.Where<Person>(p => new[]
+                                            {
+                                                $"{nameof(p.FirstName)} = 'Jack'"
+                                            }, o => o.WithAndSeparator()))
+                                        .Build();
+                                    // act
+                                    var expected =
+                                        "SELECT * FROM c WHERE c.FirstName = 'John' AND c.LastName = 'Watson' OR c.LastName = 'Fredrick'";
+                                    // assert
+                                    Expect(sql).To.Equal(expected);
+                                }
+                            }
+                        }
+                        
                         [Test]
                         public void ShouldReturnExpectedStatement()
                         {
@@ -1026,7 +1098,7 @@ public class SelectStatementTests
                                     $"{nameof(Person.FirstName)} = 'John'",
                                     $"{nameof(Person.LastName)} = 'Watson'"
                                 }, w => { w.WithAndSeparator(); })
-                                .Append(f =>
+                                .AppendWhere(f =>
                                     f.Where(new[]
                                     {
                                         $"{nameof(Person.LastName)} = 'Fredrick'"
@@ -1054,7 +1126,7 @@ public class SelectStatementTests
                                         $"{nameof(Person.FirstName)} = 'John'",
                                         $"{nameof(Person.LastName)} = 'Watson'"
                                     }, w => { w.WithAndSeparator(); })
-                                    .Append(f =>
+                                    .AppendWhere(f =>
                                         f.Where(new[]
                                         {
                                             $"{nameof(Person.LastName)} = 'Fredrick'"
@@ -1082,7 +1154,7 @@ public class SelectStatementTests
                                             $"{nameof(Person.FirstName)} = 'John'",
                                             $"{nameof(Person.LastName)} = 'Watson'"
                                         }, w => { w.WithAndSeparator(); })
-                                        .Append(f =>
+                                        .AppendWhere(f =>
                                             f.Where(new[]
                                             {
                                                 $"{nameof(Person.LastName)} = 'Fredrick'"
@@ -1127,7 +1199,7 @@ public class SelectStatementTests
                                     $"{nameof(Person.FirstName)} = 'John'",
                                     $"{nameof(Person.LastName)} = 'Watson'"
                                 }, w => { w.WithAndSeparator(); })
-                                .Append(f =>
+                                .AppendWhere(f =>
                                     f.Where(new[]
                                     {
                                         $"{nameof(Person.LastName)} = 'Fredrick'"
@@ -1156,8 +1228,11 @@ public class SelectStatementTests
                                     {
                                         $"{nameof(Person.FirstName)} = 'John'",
                                         $"{nameof(Person.LastName)} = 'Watson'"
-                                    }, w => { w.WithAndSeparator(); })
-                                    .Append(f =>
+                                    }, w =>
+                                    {
+                                        w.WithAndSeparator();
+                                    })
+                                    .AppendWhere(f =>
                                         f.Where(new[]
                                         {
                                             $"{nameof(Person.LastName)} = 'Fredrick'"
@@ -1234,33 +1309,65 @@ public class SelectStatementTests
                             }
                         }
 
-
                         [TestFixture]
                         public class AndConditionalIf
                         {
-                            [Test]
-                            public void ShouldReturnExpectedStatement()
+                            [TestFixture]
+                            public class WhenConditionIsTrue
                             {
-                                // arrange
-                                var sql = new SqlBuilder()
-                                    .SelectAll(s => s.WithSqlVariant(Variant.MySql))
-                                    .From("c")
-                                    .Where<Person>(p => new[]
-                                    {
-                                        $"{nameof(p.FirstName)} = 'Kevin'",
-                                        $"{nameof(p.LastName)} = 'Nealon'"
-                                    }, w =>
-                                    {
-                                        w.WithPropertyPrefix("ac");
-                                        w.WithAndSeparator();
-                                    })
-                                    .AppendIf(() => 2 >= 1, "LIMIT 100")
-                                    .Build();
-                                // act
-                                var expected =
-                                    "SELECT * FROM c WHERE ac.FirstName = 'Kevin' AND ac.LastName = 'Nealon' LIMIT 100;";
-                                // assert
-                                Expect(sql).To.Equal(expected);
+                                [Test]
+                                public void ShouldReturnExpectedStatement()
+                                {
+                                    // arrange
+                                    var sql = new SqlBuilder()
+                                        .SelectAll(s => s.WithSqlVariant(Variant.MySql))
+                                        .From("c")
+                                        .Where<Person>(p => new[]
+                                        {
+                                            $"{nameof(p.FirstName)} = 'Kevin'",
+                                            $"{nameof(p.LastName)} = 'Nealon'"
+                                        }, w =>
+                                        {
+                                            w.WithPropertyPrefix("ac");
+                                            w.WithAndSeparator();
+                                        })
+                                        .AppendIf(() => 2 >= 1, "LIMIT 100")
+                                        .Build();
+                                    // act
+                                    var expected =
+                                        "SELECT * FROM c WHERE ac.FirstName = 'Kevin' AND ac.LastName = 'Nealon' LIMIT 100;";
+                                    // assert
+                                    Expect(sql).To.Equal(expected);
+                                }
+                            }
+
+                            [TestFixture]
+                            public class WhenConditionIsFalse
+                            {
+                                [Test]
+                                public void ShouldReturnExpectedStatement()
+                                {
+                                    // arrange
+                                    var sql = new SqlBuilder()
+                                        .SelectAll(s => s.WithSqlVariant(Variant.MySql))
+                                        .From("c")
+                                        .Where<Person>(p => new[]
+                                        {
+                                            $"{nameof(p.FirstName)} = 'Kevin'",
+                                            $"{nameof(p.LastName)} = 'Nealon'"
+                                        }, w =>
+                                        {
+                                            w.WithPropertyPrefix("ac");
+                                            w.WithAndSeparator();
+                                        })
+                                        .AppendIf(() => 2 >= 5, "LIMIT 100")
+                                        .Build();
+                                    // act
+                                    var expected =
+                                        "SELECT * FROM c WHERE ac.FirstName = 'Kevin' AND ac.LastName = 'Nealon';";
+                                    // assert
+                                    Expect(sql).To.Equal(expected);
+                                }
                             }
                         }
                     }
@@ -1407,7 +1514,7 @@ public class SelectStatementTests
                                     $"{nameof(p.FirstName)} = 'John'",
                                     $"{nameof(p.LastName)} = 'Watson'"
                                 }, w => { w.WithAndSeparator(); })
-                                .Append(f =>
+                                .AppendWhere(f =>
                                     f.Where<Person>(p => new[]
                                     {
                                         $"{nameof(p.LastName)} = 'Fredrick'"
@@ -1435,7 +1542,7 @@ public class SelectStatementTests
                                         $"{nameof(p.FirstName)} = 'John'",
                                         $"{nameof(p.LastName)} = 'Watson'"
                                     }, w => { w.WithAndSeparator(); })
-                                    .Append(f =>
+                                    .AppendWhere(f =>
                                         f.Where<Person>(p => new[]
                                         {
                                             $"{nameof(p.LastName)} = 'Fredrick'"

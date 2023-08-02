@@ -30,8 +30,13 @@ public static class Helpers
         return selectOptions.Prefix ?? string.Empty;
     }
 
-    public static string GetPrefix(ISelectOptions selectOptions, string? table = null)
+    public static string GetPrefix(ISelectOptions selectOptions, string? table = null, string? prefix = null)
     {
+        if (prefix is not null)
+        {
+            return $"{prefix}.";
+        }
+        
         if (selectOptions is not SelectOptions so)
         {
             throw new InvalidCastException(Errors.SelectOptionCastException);
