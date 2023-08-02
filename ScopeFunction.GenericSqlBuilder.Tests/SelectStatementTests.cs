@@ -1233,6 +1233,36 @@ public class SelectStatementTests
                                 Expect(sql).To.Equal(expected);
                             }
                         }
+
+
+                        [TestFixture]
+                        public class AndConditionalIf
+                        {
+                            [Test]
+                            public void ShouldReturnExpectedStatement()
+                            {
+                                // arrange
+                                var sql = new SqlBuilder()
+                                    .SelectAll(s => s.WithSqlVariant(Variant.MySql))
+                                    .From("c")
+                                    .Where<Person>(p => new[]
+                                    {
+                                        $"{nameof(p.FirstName)} = 'Kevin'",
+                                        $"{nameof(p.LastName)} = 'Nealon'"
+                                    }, w =>
+                                    {
+                                        w.WithPropertyPrefix("ac");
+                                        w.WithAndSeparator();
+                                    })
+                                    .AppendIf(() => 2 >= 1, "LIMIT 100")
+                                    .Build();
+                                // act
+                                var expected =
+                                    "SELECT * FROM c WHERE ac.FirstName = 'Kevin' AND ac.LastName = 'Nealon' LIMIT 100;";
+                                // assert
+                                Expect(sql).To.Equal(expected);
+                            }
+                        }
                     }
 
                     [TestFixture]

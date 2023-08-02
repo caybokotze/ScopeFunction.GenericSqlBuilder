@@ -49,7 +49,28 @@ public class InsertStatementTests
         [TestFixture]
         public class WithOptions
         {
-            
+            [Test]
+            public void ShouldReturnExpectedStatement()
+            {
+                // arrange
+                var sql = new SqlBuilder()
+                    .Insert(new []
+                    {
+                        nameof(Person.FirstName), 
+                        nameof(Person.LastName), 
+                        nameof(Person.Age)
+                    }, o =>
+                    {
+                        o.WithUpdateOnDuplicateKey(nameof(Person.FirstName), nameof(Person.LastName));
+                    })
+                    .Into("c")
+                    .Build();
+                
+                // act
+                const string expected = "INSERT INTO people (FirstName, LastName, Age) VALUES (@FirstName, @LastName, @Age)";
+                // assert
+                Expect(sql).To.Equal(expected);
+            }
         }
 
         [TestFixture]

@@ -184,6 +184,16 @@ public class SelectWhereStatement : Statement, IBuildable
         statement(new FromStatement(this, options));
         return this;
     }
+
+    public SelectWhereStatement AppendIf(Func<bool> condition, string clause)
+    {
+        if (condition())
+        {
+            AddStatement($"{clause} ");
+        }
+        
+        return this;
+    }
     
     public SelectWhereStatement Append(string clause)
     {

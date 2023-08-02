@@ -11,7 +11,19 @@ public interface IInsertOptions : IOptions
     IInsertOptions WithoutProperty(string property);
     IInsertOptions WithProperties(IEnumerable<string> properties);
     IInsertOptions WithoutProperties(IEnumerable<string> properties);
+    
+    /// <summary>
+    /// This overload will add a 'SET' for all available properties.
+    /// </summary>
+    /// <returns></returns>
     IInsertOptions WithUpdateOnDuplicateKey();
+    
+    /// <summary>
+    /// This overload will only add a 'SET' for the provided properties.
+    /// </summary>
+    /// <param name="onlySet"></param>
+    /// <returns></returns>
+    IInsertOptions WithUpdateOnDuplicateKey(params string[] onlySet);
     IInsertOptions WithInsertIgnore();
     IInsertOptions WithAppendedLastInsertedId();
 }
@@ -20,10 +32,12 @@ public class InsertOptions : IInsertOptions
 {
     public InsertOptions()
     {
-        AfterInto = Array.Empty<string>().ToList();
+        AfterInto = new List<string>();
+        OnlySet = new List<string>();
     }
     
     public List<string> AfterInto { get; set; }
+    public List<string> OnlySet { get; private set; }
     
     public void WithPropertyPrefix(string prefix)
     {
@@ -68,6 +82,12 @@ public class InsertOptions : IInsertOptions
     public IInsertOptions WithUpdateOnDuplicateKey()
     {
         throw new NotImplementedException();
+    }
+
+    public IInsertOptions WithUpdateOnDuplicateKey(params string[] onlySet)
+    {
+        OnlySet.AddRange(onlySet);
+        return this;
     }
 
     public IInsertOptions WithInsertIgnore()

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using ScopeFunction.GenericSqlBuilder.Common;
 using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
@@ -57,14 +59,13 @@ public class UpdateStatement<T> : Statement where T : new()
     {
         _options = options;
     }
-
     
     /// <summary>
-    /// Supports an array with type assisting. If options were provided they will be applied.
+    /// Set the properties to be updated. This will only update the properties specified.
     /// </summary>
     /// <param name="properties"></param>
     /// <returns></returns>
-    public UpdateSetStatement Set(Func<T, string[]> properties)
+    public UpdateSetStatement Set(params Expression<Func<T, object?>>[] properties)
     {
         if (_options is not UpdateOptions uo)
         {
@@ -72,9 +73,20 @@ public class UpdateStatement<T> : Statement where T : new()
         }
         
         AddStatement("SET ");
-        foreach (var segment in properties.Invoke(new T()))
+
+        foreach (var segment in properties)
         {
-            AddStatement($"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment} ");
+            if (segment.Body is MemberExpression memberExpression)
+            {
+                var name = memberExpression.Member.Name;
+                AddStatement($"{GetPropertyVariant(ConvertCase(name, uo.PropertyCase), uo.Variant)} = @{name} ");
+            }
+
+            if (segment.Body is UnaryExpression unaryExpression)
+            {
+                var name = (unaryExpression.Operand as MemberExpression)?.Member.Name;
+                AddStatement($"{GetPropertyVariant(ConvertCase(name ?? string.Empty, uo.PropertyCase), uo.Variant)} = @{name} ");
+            }
         }
         
         return new UpdateSetStatement(this, _options);

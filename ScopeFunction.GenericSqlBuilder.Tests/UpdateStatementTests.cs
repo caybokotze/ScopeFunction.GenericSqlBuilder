@@ -23,11 +23,13 @@ public class UpdateStatementTests
                     // arrange
                     var sql = new SqlBuilder()
                         .Update<Person>("people", o => o.WithProperty("Foo"))
-                        .Set()
+                        .Set(s => s.FirstName,
+                            s => s.LastName,
+                            s => s.Age)
                         .Where("Id = 21")
                         .Build();
                     // act
-                    const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName, Age = @Age, Foo = @Foo WHERE Id = 21";
+                    const string expected = "UPDATE people SET FirstName = @FirstName, Age = @Age, Foo = @Foo WHERE Id = 21";
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
