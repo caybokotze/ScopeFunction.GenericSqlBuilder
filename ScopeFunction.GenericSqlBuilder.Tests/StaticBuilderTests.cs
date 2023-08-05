@@ -16,14 +16,14 @@ public class StaticQueryBuilderTests
             .SelectAll(o => o.WithPropertyPrefix("p"))
             .From("people")
             .Where<Person>(p => nameof(p.Age), w => w.EqualsNumber(50))
-            .OrderBy<Person>(o => nameof(o.Age)).Asc()
+            .OrderBy<Person>(o => nameof(o.Age))
             .Build();
 
         var staticBuilderSql =
             Query(q => q.SelectAll(o => o.WithPropertyPrefix("p"))
                 .From("people")
                 .Where<Person>(p => nameof(p.Age), w => w.EqualsNumber(50))
-                .OrderBy<Person>(o => nameof(o.Age)).Asc()
+                .OrderBy<Person>(o => nameof(o.Age))
             );
         
         // act

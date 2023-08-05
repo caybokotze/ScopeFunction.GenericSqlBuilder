@@ -79,9 +79,11 @@ public class SelectWhereStatement : Statement, IBuildable
 
     # region ORDER BY
 
-    private void AddOrderByClauses(IReadOnlyCollection<string> clauses, Options orderByOptions)
+    private void AddOrderByClauses(IReadOnlyCollection<string> clauses, OrderByOptions orderByOptions)
     {
         var prefix = Helpers.GetPrefix(orderByOptions, _options);
+        var ascOrDesc = orderByOptions.IsDesc ? "DESC" : "ASC";
+        
         AddStatement("ORDER BY ");
 
         var multipleClauses = clauses.Count > 1;
@@ -96,21 +98,21 @@ public class SelectWhereStatement : Statement, IBuildable
             {
                 if (multipleClauses && !lastItem)
                 {
-                    AddStatement($"{clause}, ");
+                    AddStatement($"{clause} {ascOrDesc}, ");
                     continue;
                 }
                 
-                AddStatement($"{clause} ");
+                AddStatement($"{clause} {ascOrDesc} ");
                 continue;
             }
 
             if (multipleClauses && !lastItem)
             {
-                AddStatement($"{prefix}.{clause}, ");
+                AddStatement($"{prefix}.{clause} {ascOrDesc}, ");
                 continue;
             }
             
-            AddStatement($"{prefix}.{clause} ");
+            AddStatement($"{prefix}.{clause} {ascOrDesc} ");
         }
     }
 
@@ -119,14 +121,15 @@ public class SelectWhereStatement : Statement, IBuildable
         AddStatement($"ORDER BY {clause} ");
         return new OrderByStatement(this, _options);
     }
-    
+
     public OrderByStatement OrderBy(string clause, Action<IOrderByOptions> options)
     {
         var orderByOptions = new OrderByOptions();
         options(orderByOptions);
-        var prefix = Helpers.GetPrefix(orderByOptions, _options);
         
-        AddStatement($"ORDER BY {prefix}.{clause} ");
+        var ascOrDesc = orderByOptions.IsDesc ? "DESC" : "ASC";
+
+        AddStatement($"ORDER BY {clause} {ascOrDesc} ");
         return new OrderByStatement(this, _options);
     }
 
@@ -149,6 +152,16 @@ public class SelectWhereStatement : Statement, IBuildable
     {
         var statement = clause(new T());
         var orderByOptions = new OrderByOptions();
+        AddOrderByClauses(new []{ statement }, orderByOptions);
+        return new OrderByStatement(this, _options);
+    }
+    
+    public OrderByStatement OrderBy<T>(Func<T, string> clause, Action<IOrderByOptions> options) where T : new()
+    {
+        var statement = clause(new T());
+        var orderByOptions = new OrderByOptions();
+        options(orderByOptions);
+        
         AddOrderByClauses(new []{ statement }, orderByOptions);
         return new OrderByStatement(this, _options);
     }
@@ -198,6 +211,8 @@ public class SelectWhereStatement : Statement, IBuildable
             throw new InvalidCastException(
                 Errors.SelectOptionCastException);
         }
+
+        options.IsAppendWhere = true;
 
         statement(new FromStatement(this, options));
         return this;

@@ -4,11 +4,13 @@ namespace ScopeFunction.GenericSqlBuilder;
 
 public interface IOrderByOptions : IOptions
 {
-    void WithSelectPrefix();
+    void WithDesc();
+    void WithAsc();
 }
 
 public class OrderByOptions : Options, IOrderByOptions
 {
+    public bool IsDesc { get; set; }
     public bool UseSelectPrefix { get; set; }
     public void WithPropertyPrefix(string prefix)
     {
@@ -20,8 +22,13 @@ public class OrderByOptions : Options, IOrderByOptions
         IgnorePrefix = true;
     }
 
-    public void WithSelectPrefix()
+    public void WithDesc()
     {
-        throw new NotImplementedException();
+        IsDesc = true;
+    }
+
+    public void WithAsc()
+    {
+        IsDesc = false;
     }
 }

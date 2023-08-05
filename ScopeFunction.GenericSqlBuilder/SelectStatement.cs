@@ -29,7 +29,8 @@ public class SelectStatement : Statement
     
     public SelectStatement Append(string clause)
     {
-        AddStatement($"{clause} ");
+        AddStatement($"{clause}, ");
+
         return this;
     }
 
@@ -39,7 +40,13 @@ public class SelectStatement : Statement
         {
             throw new InvalidCastException(Errors.SelectOptionCastException);
         }
-        
+
+        if (selectOptions.AppendAfterFrom.Count == 0)
+        {
+            TrimLast(true);
+            AddStatement(" ");
+        }
+
         if (selectOptions.AppendAfterFrom.Count > 0)
         {
             foreach (var appendableAfterFrom in selectOptions.AppendAfterFrom)

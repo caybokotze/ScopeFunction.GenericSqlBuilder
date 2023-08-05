@@ -261,17 +261,39 @@ public class FromStatement : Statement, IBuildable
         switch (selectOptions.IsAppendWhere)
         {
             case false:
-                AddStatement(applyPrefix && !string.IsNullOrEmpty(prefix) ? $"WHERE {prefix}.{clause}" : $"WHERE {clause} ");
+                AddStatement(applyPrefix && !string.IsNullOrEmpty(prefix) 
+                    ? $"WHERE {prefix}.{clause}" 
+                    : $"WHERE {clause} ");
                 break;
             case true:
-                AddStatement(applyPrefix && !string.IsNullOrEmpty(prefix) ? $"{prefix}.{clause}" : $"{clause} ");
+                AddStatement(applyPrefix && !string.IsNullOrEmpty(prefix) 
+                    ? $"{prefix}.{clause}" 
+                    : $"{clause} ");
                 break;
         }
 
         return new SelectWhereStatement(this, _options);
     }
 
-    public SelectWhereStatement Where(string clause, Action<SelectWhereCondition> condition)
+    public SelectWhereStatement Where(string clause, Action<IWhereOptions> options)
+    {
+        if (_options is not SelectOptions)
+        {
+            throw new InvalidCastException(
+                Errors.SelectOptionCastException);
+        }
+        
+        var whereOptions = new WhereOptions();
+        options(whereOptions);
+        
+        AddWhereOrSeparator(whereOptions);
+        
+        AddStatement($"{clause} ");
+
+        return new SelectWhereStatement(this, _options);
+    }
+
+    public SelectWhereStatement Where<T>(Func<T, string> clause, Action<SelectWhereCondition> condition) where T : new()
     {
         if (_options is not SelectOptions selectOptions)
         {
@@ -280,28 +302,6 @@ public class FromStatement : Statement, IBuildable
         }
         
         var whereOptions = new WhereOptions();
-        var prefix = Helpers.GetPrefix(new WhereOptions(), _options);
-        
-        AddWhereOrSeparator(whereOptions);
-        
-        if (!string.IsNullOrEmpty(prefix))
-        {
-            AddStatement($"{prefix}.{GetPropertyVariant(ConvertCase(clause, selectOptions.PropertyCase), selectOptions.Variant)} ");
-        }
-
-        if (string.IsNullOrEmpty(prefix))
-        {
-            AddStatement($"{GetPropertyVariant(ConvertCase(clause, selectOptions.PropertyCase), selectOptions.Variant)} ");
-        }
-        
-        var whereCondition = new SelectWhereCondition(this, _options);
-        condition(whereCondition);
-        return new SelectWhereStatement(this, _options);
-    }
-
-    public SelectWhereStatement Where<T>(Func<T, string> clause, Action<SelectWhereCondition> condition) where T : new()
-    {
-        var whereOptions = new WhereOptions();
         var prefix = Helpers.GetPrefix(whereOptions, _options);
         var clauseSegment = clause(new T());
         
@@ -309,12 +309,43 @@ public class FromStatement : Statement, IBuildable
         
         if (!string.IsNullOrEmpty(prefix))
         {
-            AddStatement($"{prefix}.{clauseSegment} ");
+            AddStatement($"{prefix}.{GetPropertyVariant(ConvertCase(clauseSegment, selectOptions.PropertyCase), selectOptions.Variant)} ");
         }
 
         if (string.IsNullOrEmpty(prefix))
         {
-            AddStatement($"{clauseSegment} ");
+            AddStatement($"{GetPropertyVariant(ConvertCase(clauseSegment, selectOptions.PropertyCase), selectOptions.Variant)} ");
+        }
+        
+        var whereCondition = new SelectWhereCondition(this, _options);
+        condition(whereCondition);
+        return new SelectWhereStatement(this, _options);
+    }
+    
+    public SelectWhereStatement Where<T>(Func<T, string> clause, Action<SelectWhereCondition> condition, Action<IWhereOptions> options) where T : new()
+    {
+        if (_options is not SelectOptions selectOptions)
+        {
+            throw new InvalidCastException(
+                Errors.SelectOptionCastException);
+        }
+        
+        var whereOptions = new WhereOptions();
+        options(whereOptions);
+        
+        var prefix = Helpers.GetPrefix(whereOptions, _options);
+        var clauseSegment = clause(new T());
+        
+        AddWhereOrSeparator(whereOptions);
+        
+        if (!string.IsNullOrEmpty(prefix))
+        {
+            AddStatement($"{prefix}.{GetPropertyVariant(ConvertCase(clauseSegment, selectOptions.PropertyCase), selectOptions.Variant)} ");
+        }
+
+        if (string.IsNullOrEmpty(prefix))
+        {
+            AddStatement($"{GetPropertyVariant(ConvertCase(clauseSegment, selectOptions.PropertyCase), selectOptions.Variant)} ");
         }
         
         var whereCondition = new SelectWhereCondition(this, _options);

@@ -16,8 +16,8 @@
         <Copyright>A product of Merge Digital</Copyright>
         <Description>A package that offers you the ability to quickly build up Generic sql statements for (MySql, MsSql, CosmosDb and PostgreSql)</Description>
         <PackageTags>SQL Builder, MySql, MsSql, CosmosDb, PostGreSql</PackageTags>
-        <PackageReleaseNotes>Add initial SELECT statement builder</PackageReleaseNotes>
-        <PackageVersion>1.0.3-beta</PackageVersion>
+        <PackageReleaseNotes>Fix up append whereIf delegate clause to append correctly and remove string literal prefixing</PackageReleaseNotes>
+        <PackageVersion>1.0.4-beta</PackageVersion>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 

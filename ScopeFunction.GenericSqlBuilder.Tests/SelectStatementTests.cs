@@ -223,6 +223,20 @@ public class SelectStatementTests
                         }
                     }
                 }
+
+
+                [TestFixture]
+                public class WithAppendSelect
+                {
+                    [Test]
+                    public void ShouldReturnExpectedResult()
+                    {
+                        // arrange
+                        
+                        // act
+                        // assert
+                    }
+                }
             }
 
             [TestFixture]
@@ -404,7 +418,7 @@ public class SelectStatementTests
                                             $"{nameof(p.FirstName)} like %John%"
                                         })
                                         .Or()
-                                        .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                                        .Where<Person>(p => nameof(p.FirstName), o => o.EqualsString("John"))
                                         .And()
                                         .Where<Person>(p => nameof(p.LastName), w => w.Like("Williams"))
                                         .Build();
@@ -472,7 +486,7 @@ public class SelectStatementTests
                                     $"{nameof(p.FirstName)} like %John%"
                                 })
                                 .Or()
-                                .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                                .Where<Person>(p => nameof(p.FirstName), o => o.EqualsString("John"))
                                 .And()
                                 .Where<Person>(p => nameof(p.LastName), w => w.Like("Williams"))
                                 .Build();
@@ -542,7 +556,7 @@ public class SelectStatementTests
                                     $"{nameof(p.FirstName)} like %John%"
                                 })
                                 .Or()
-                                .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                                .Where<Person>(p => nameof(p.FirstName), o => o.EqualsString("John"))
                                 .And()
                                 .Where<Person>(p => nameof(p.LastName), w => w.Like("Williams"))
                                 .Build();
@@ -658,7 +672,7 @@ public class SelectStatementTests
                         .AppendSelect(a =>
                             a.Select<Manager>(s => s.WithoutPropertyPrefix()))
                         .From("people")
-                        .Where(nameof(Person.Age), w => w.EqualsNumber(50))
+                        .Where<Person>(p => nameof(p.Age), w => w.EqualsNumber(50))
                         .Build();
                     // act
                     const string expected = "SELECT FirstName, LastName, Age, RoleId FROM people WHERE Age = 50";
@@ -679,7 +693,7 @@ public class SelectStatementTests
                         .AppendSelect(a =>
                             a.Select<Manager>(s => s.WithPropertyPrefix("b")))
                         .From("people")
-                        .Where(nameof(Person.Age), w =>
+                        .Where<Person>(p => nameof(p.Age), w =>
                         {
                             w.EqualsNumber(50);
                         })
@@ -689,6 +703,38 @@ public class SelectStatementTests
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
+            }
+        }
+
+        [TestFixture]
+        public class WithAppendSelectAndAppendStatements
+        {
+            [Test]
+            public void ShouldReturnExpectedResult()
+            {
+                // arrange
+                var sql = new SqlBuilder()
+                    .Select<Person>(o =>
+                    {
+                        o.WithPropertyPrefix("p");
+                        o.WithPropertyCasing(Casing.SnakeCase);
+                    })
+                    .Append("(SELECT COUNT(*) FROM people) as person_count")
+                    .AppendSelect(a =>
+                        a.Select<Manager>(o => o.WithPropertyPrefix("m")))
+                    .From("people")
+                    .LeftJoin("managers")
+                    .On("p.id = m.person_id")
+                    .Where("p.id = @PersonId")
+                    .AppendWhere(a =>
+                        a.Where("p.date_created BETWEEN DATE(@DateFrom) AND DATE(@DateTo)", o => o.WithAndSeparator()))
+                    .AppendWhereIf(() => 5 > 1, a =>
+                        a.Where("p.person_status = @PersonStatus", o => o.WithAndSeparator()))
+                    .OrderBy("p.date_modified", o => o.WithDesc())
+                    .Build();
+                // act
+                // assert
+                Expect(sql).To.Equal("SELECT (SELECT COUNT(*) FROM people) as person_count, p.first_name, p.last_name, p.age, m.role_id FROM people LEFT JOIN managers ON p.id = m.person_id WHERE p.id = @PersonId AND p.date_created BETWEEN DATE(@DateFrom) AND DATE(@DateTo) AND p.person_status = @PersonStatus ORDER BY p.date_modified DESC");
             }
         }
 
@@ -1204,8 +1250,7 @@ public class SelectStatementTests
                                     {
                                         $"{nameof(Person.LastName)} = 'Fredrick'"
                                     }))
-                                .OrderBy("c.Age")
-                                .Desc()
+                                .OrderBy("c.Age DESC")
                                 .Build();
                             // act
                             var expected =
@@ -1242,12 +1287,11 @@ public class SelectStatementTests
                                         $"{nameof(p.Age)}",
                                         $"{nameof(p.FirstName)}",
                                         $"{nameof(p.LastName)}"
-                                    })
-                                    .Desc()
+                                    }, o => o.WithDesc())
                                     .Build();
                                 // act
                                 var expected =
-                                    "SELECT * FROM c WHERE c.FirstName = 'John' AND c.LastName = 'Watson' OR c.LastName = 'Fredrick' ORDER BY c.Age, c.FirstName, c.LastName DESC";
+                                    "SELECT * FROM c WHERE c.FirstName = 'John' AND c.LastName = 'Watson' OR c.LastName = 'Fredrick' ORDER BY c.Age DESC, c.FirstName DESC, c.LastName DESC";
                                 // assert
                                 Expect(sql).To.Equal(expected);
                             }
@@ -1798,7 +1842,7 @@ public class SelectStatementTests
                 .Select<Person>()
                 .From("people")
                 .Append("JOIN t FROM j")
-                .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                .Where<Person>(p => nameof(p.FirstName), o => o.EqualsString("John"))
                 .Build();
             // act
             const string expected = "SELECT people.FirstName, people.LastName, people.Age FROM people JOIN t FROM j WHERE people.FirstName = 'John'";
@@ -1819,12 +1863,16 @@ public class SelectStatementTests
             {
                 // arrange
                 var sql = new SqlBuilder()
-                    .Select<Person>(o => o.WithSqlVariant(Variant.MySql))
+                    .Select<Person>(o =>
+                    {
+                        o.WithSqlVariant(Variant.MySql);
+                        o.WithPropertyCasing(Casing.SnakeCase);
+                    })
                     .From("people")
-                    .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                    .Where<Person>(p => nameof(p.FirstName), o => o.EqualsString("John"))
                     .Build();
                 // act
-                var expected = "SELECT people.`FirstName`, people.`LastName`, people.`Age` FROM people WHERE people.`FirstName` = \'John\';";
+                var expected = "SELECT people.`first_name`, people.`last_name`, people.`age` FROM people WHERE people.`first_name` = \'John\';";
                 // assert
                 Expect(sql).To.Equal(expected);
             }
@@ -1840,7 +1888,7 @@ public class SelectStatementTests
                 var sql = new SqlBuilder()
                     .Select<Person>(o => o.WithSqlVariant(Variant.MsSql))
                     .From("people")
-                    .Where(nameof(Person.FirstName), o => o.EqualsString("John"))
+                    .Where<Person>(p => nameof(p.FirstName), o => o.EqualsString("John"))
                     .Build();
                 // act
                 const string expected = "SELECT people.[FirstName], people.[LastName], people.[Age] FROM people WHERE people.[FirstName] = \'John\';";
