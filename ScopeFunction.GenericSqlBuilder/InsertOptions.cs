@@ -1,4 +1,5 @@
-﻿using ScopeFunction.GenericSqlBuilder.Common;
+﻿using System.Linq.Expressions;
+using ScopeFunction.GenericSqlBuilder.Common;
 using ScopeFunction.GenericSqlBuilder.Enums;
 
 namespace ScopeFunction.GenericSqlBuilder;
@@ -26,6 +27,12 @@ public interface IInsertOptions : IOptions
     IInsertOptions WithUpdateOnDuplicateKey(params string[] onlySet);
     IInsertOptions WithInsertIgnore();
     IInsertOptions WithAppendedLastInsertedId();
+}
+
+public interface IGenericInsertOptions<T> : IInsertOptions
+{
+    IInsertOptions WithUpdateOnDuplicateKey(Func<T, string[]> properties);
+    IInsertOptions WithUpdateOnDuplicateKey(params Expression<Func<T, object?>>[] properties);
 }
 
 public class InsertOptions : IInsertOptions

@@ -27,7 +27,7 @@ public class UpdateStatementBuilder : Statement, IUpdateStatementBuilder
         
         var updateOptions = new UpdateOptions
         {
-            Prefix = table
+            Table = table
         };
         
         options(updateOptions);
@@ -37,9 +37,10 @@ public class UpdateStatementBuilder : Statement, IUpdateStatementBuilder
     public UpdateStatement<T> Update<T>(string table) where T : new()
     {
         AddStatement($"UPDATE {table} ");
+        
         return new UpdateStatement<T>(this, new UpdateOptions
         {
-            Prefix = table
+            Table = table
         });
     }
     
@@ -49,7 +50,7 @@ public class UpdateStatementBuilder : Statement, IUpdateStatementBuilder
         
         var updateOptions = new UpdateOptions
         {
-            Prefix = table
+            Table = table
         };
         
         options(updateOptions);

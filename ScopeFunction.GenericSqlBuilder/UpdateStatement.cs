@@ -43,8 +43,11 @@ public class UpdateStatement : Statement
         
         foreach (var segment in properties)
         {
-            AddStatement($"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment} ");
+            AddStatement($"{Helpers.GetPrefix(uo)}{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
         }
+        
+        TrimLast(true);
+        AddStatement(" ");
         
         return new UpdateSetStatement(this, _options);
     }
@@ -58,6 +61,29 @@ public class UpdateStatement<T> : Statement where T : new()
     public UpdateStatement(Statement statement, IUpdateOptions options) : base(statement, options)
     {
         _options = options;
+    }
+
+    public UpdateSetStatement Set(Func<T, string[]> properties)
+    {
+        if (_options is not UpdateOptions uo)
+        {
+            throw new InvalidCastException(Errors.UpdateOptionCastException);
+        }
+        
+        AddStatement("SET ");
+
+        var onlySetProperties = properties(new T());
+        
+        foreach (var segment in onlySetProperties)
+        {
+            AddStatement(
+                $"{Helpers.GetPrefix(uo)}{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
+        }
+        
+        TrimLast(true);
+        AddStatement(" ");
+        
+        return new UpdateSetStatement(this, _options);
     }
     
     /// <summary>
@@ -79,15 +105,18 @@ public class UpdateStatement<T> : Statement where T : new()
             if (segment.Body is MemberExpression memberExpression)
             {
                 var name = memberExpression.Member.Name;
-                AddStatement($"{GetPropertyVariant(ConvertCase(name, uo.PropertyCase), uo.Variant)} = @{name} ");
+                AddStatement($"{GetPropertyVariant(ConvertCase(name, uo.PropertyCase), uo.Variant)} = @{name}, ");
             }
 
             if (segment.Body is UnaryExpression unaryExpression)
             {
                 var name = (unaryExpression.Operand as MemberExpression)?.Member.Name;
-                AddStatement($"{GetPropertyVariant(ConvertCase(name ?? string.Empty, uo.PropertyCase), uo.Variant)} = @{name} ");
+                AddStatement($"{GetPropertyVariant(ConvertCase(name ?? string.Empty, uo.PropertyCase), uo.Variant)} = @{name}, ");
             }
         }
+        
+        TrimLast(true);
+        AddStatement(" ");
         
         return new UpdateSetStatement(this, _options);
     }

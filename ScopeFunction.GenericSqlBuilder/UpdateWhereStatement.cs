@@ -18,9 +18,9 @@ public class UpdateWhereStatement : Statement, IBuildable
     public UpdateWhereStatement And(string clause, Action<UpdateWhereCondition> condition)
     {
         var whereCondition = new UpdateWhereCondition(this, _options);
-        condition(whereCondition);
         
         AddStatement($"AND {clause} ");
+        condition(whereCondition);
         return this;
     }
     
@@ -33,9 +33,10 @@ public class UpdateWhereStatement : Statement, IBuildable
     public UpdateWhereStatement Or(string clause, Action<UpdateWhereCondition> condition)
     {
         var whereCondition = new UpdateWhereCondition(this, _options);
-        condition(whereCondition);
         
         AddStatement($"OR {clause} ");
+        
+        condition(whereCondition);
         return this;
     }
 

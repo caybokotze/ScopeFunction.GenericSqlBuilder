@@ -33,9 +33,8 @@ public class UpdateSetStatement : Statement
     public UpdateWhereStatement Where(string clause, Action<UpdateWhereCondition> condition)
     {
         var whereCondition = new UpdateWhereCondition(this, _options);
-        condition(whereCondition);
         
-        if (_options is not UpdateOptions updateOptions)
+        if (_options is not UpdateOptions)
         {
             throw new InvalidCastException(Errors.UpdateOptionCastException);
         }
@@ -43,6 +42,9 @@ public class UpdateSetStatement : Statement
         // todo: apply some prefix / case conversion
         
         AddStatement($"WHERE {clause} ");
+        
+        condition(whereCondition);
+        
         return new UpdateWhereStatement(this, _options);
     }
 }

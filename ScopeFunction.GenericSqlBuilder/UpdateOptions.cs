@@ -28,12 +28,15 @@ public class UpdateOptions : Options, IUpdateOptions
         var configuration = GenericQueryBuilderSettings.GenericSqlBuilderConfiguration;
         Variant = configuration.Variant;
         PropertyCase = configuration.Casing;
+        Table = string.Empty;
     }
     
     public List<string> RemovedProperties { get; private set; }
     public List<string> AddedProperties { get; private set; }
     public Casing PropertyCase { get; private set; }
     public Variant Variant { get; private set; }
+    public string Table { get; set; }
+    
     
     public IUpdateOptions WithSqlVariant(Variant variant)
     {

@@ -58,12 +58,12 @@ public static class Helpers
                 Errors.SelectOptionCastException);
         }
 
-        if (uo is {IgnorePrefix: true, Prefix: not null})
+        return uo switch
         {
-            throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed);
-        }
-
-        return uo.Prefix is not null ? $"{uo.Prefix}." : string.Empty;
+            {IgnorePrefix: true, Prefix: not null} => throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed),
+            {IgnorePrefix: false, Prefix: null} => $"{uo.Table}.",
+            _ => uo.Prefix is not null ? $"{uo.Prefix}." : string.Empty
+        };
     }
 }
 
