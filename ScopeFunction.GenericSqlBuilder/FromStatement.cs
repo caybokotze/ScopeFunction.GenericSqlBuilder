@@ -26,6 +26,7 @@ public class FromStatement : Statement, IBuildable
     public string Build()
     {
         SetSelectOptions(_options);
+        
         return BuildStatement();
     }
 
@@ -55,8 +56,8 @@ public class FromStatement : Statement, IBuildable
         {
             foreach (var clause in clauses)
             {
-                AddStatement($"{GetPrefixAndClause(clause, prefix)} ");
-                AddStatement($"{separator} ");
+                AddStatement($"{GetPrefixAndClause(clause, prefix)}");
+                AddStatement($" {separator} ");
             }
 
             RemoveLast();
@@ -65,8 +66,8 @@ public class FromStatement : Statement, IBuildable
 
         foreach (var clause in clauses)
         {
-            AddStatement($"{clause} ");
-            AddStatement($"{separator} ");
+            AddStatement($"{clause}");
+            AddStatement($" {separator} ");
         }
 
         RemoveLast();
@@ -144,6 +145,7 @@ public class FromStatement : Statement, IBuildable
         {
             AddWhereOrSeparator(whereOptions);
             AddWhereClauses(clauses, whereOptions);
+            AddStatement(" ");
             return new SelectWhereStatement(this, _options);
         }
 
@@ -159,7 +161,6 @@ public class FromStatement : Statement, IBuildable
 
         AddStatement("(");
         AddWhereClauses(clauses, whereOptions);
-        TrimLast();
         AddStatement(") ");
 
         return new SelectWhereStatement(this, _options);
@@ -201,6 +202,7 @@ public class FromStatement : Statement, IBuildable
         {
             AddWhereOrSeparator(whereOptions);
             AddWhereClauses(clauses, whereOptions);
+            AddStatement(" ");
             return new SelectWhereStatement(this, _options);
         }
 
@@ -216,7 +218,6 @@ public class FromStatement : Statement, IBuildable
 
         AddStatement("(");
         AddWhereClauses(clauses, whereOptions);
-        TrimLast();
         AddStatement(") ");
         return new SelectWhereStatement(this, _options);
     }
@@ -240,6 +241,7 @@ public class FromStatement : Statement, IBuildable
         var whereOptions = new WhereOptions();
         AddWhereOrSeparator(whereOptions);
         AddWhereClauses(clauses, whereOptions);
+        AddStatement(" ");
         return new SelectWhereStatement(this, _options);
     }
     
@@ -285,11 +287,9 @@ public class FromStatement : Statement, IBuildable
         }
         
         var whereOptions = new WhereOptions();
-        
         options(whereOptions);
         
         AddWhereOrSeparator(whereOptions);
-        
         AddStatement($"{clause} ");
 
         return new SelectWhereStatement(this, _options);
@@ -318,7 +318,7 @@ public class FromStatement : Statement, IBuildable
         {
             AddStatement($"{GetPropertyVariant(ConvertCase(clauseSegment, selectOptions.PropertyCase), selectOptions.Variant)} ");
         }
-        
+
         var whereCondition = new SelectWhereCondition(this, _options);
         condition(whereCondition);
         return new SelectWhereStatement(this, _options);
@@ -365,6 +365,8 @@ public class FromStatement : Statement, IBuildable
         var whereOptions = new WhereOptions();
         AddWhereOrSeparator(whereOptions);
         AddWhereClauses(clauses, whereOptions);
+        AddStatement(" ");
+        
         return new SelectWhereStatement(this, _options);
     }
     

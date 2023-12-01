@@ -43,10 +43,11 @@ public class UpdateStatement : Statement
         
         foreach (var segment in properties)
         {
-            AddStatement($"{Helpers.GetPrefix(uo)}{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
+            AddStatement($"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}");
+            AddStatement(", ");
         }
         
-        TrimLast(true);
+        RemoveLast();
         AddStatement(" ");
         
         return new UpdateSetStatement(this, _options);
@@ -63,64 +64,6 @@ public class UpdateStatement<T> : Statement where T : new()
         _options = options;
     }
 
-    public UpdateSetStatement Set(Func<T, string[]> properties)
-    {
-        if (_options is not UpdateOptions uo)
-        {
-            throw new InvalidCastException(Errors.UpdateOptionCastException);
-        }
-        
-        AddStatement("SET ");
-
-        var onlySetProperties = properties(new T());
-        
-        foreach (var segment in onlySetProperties)
-        {
-            AddStatement(
-                $"{Helpers.GetPrefix(uo)}{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
-        }
-        
-        TrimLast(true);
-        AddStatement(" ");
-        
-        return new UpdateSetStatement(this, _options);
-    }
-    
-    /// <summary>
-    /// Set the properties to be updated. This will only update the properties specified.
-    /// </summary>
-    /// <param name="properties"></param>
-    /// <returns></returns>
-    public UpdateSetStatement Set(params Expression<Func<T, object?>>[] properties)
-    {
-        if (_options is not UpdateOptions uo)
-        {
-            throw new InvalidCastException(Errors.UpdateOptionCastException);
-        }
-        
-        AddStatement("SET ");
-
-        foreach (var segment in properties)
-        {
-            if (segment.Body is MemberExpression memberExpression)
-            {
-                var name = memberExpression.Member.Name;
-                AddStatement($"{GetPropertyVariant(ConvertCase(name, uo.PropertyCase), uo.Variant)} = @{name}, ");
-            }
-
-            if (segment.Body is UnaryExpression unaryExpression)
-            {
-                var name = (unaryExpression.Operand as MemberExpression)?.Member.Name;
-                AddStatement($"{GetPropertyVariant(ConvertCase(name ?? string.Empty, uo.PropertyCase), uo.Variant)} = @{name}, ");
-            }
-        }
-        
-        TrimLast(true);
-        AddStatement(" ");
-        
-        return new UpdateSetStatement(this, _options);
-    }
-
     /// <summary>
     /// Will only build up properties reflectively. If options were provided they will be applied.
     /// </summary>
@@ -134,15 +77,16 @@ public class UpdateStatement<T> : Statement where T : new()
         }
         
         AddStatement("SET ");
+        
         var segments = StatementBuilder.GetUpdateProperties<T>(uo);
 
         foreach (var segment in segments)
         {
-            AddStatement(
-                $"{Helpers.GetPrefix(uo)}{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}, ");
+            AddStatement($"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}");
+            AddStatement(", ");
         }
         
-        TrimLast(true);
+        RemoveLast();
         AddStatement(" ");
         
         return new UpdateSetStatement(this, _options);

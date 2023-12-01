@@ -50,20 +50,5 @@ public static class Helpers
         };
     }
 
-    public static string GetPrefix(IUpdateOptions updateOptions)
-    {
-        if (updateOptions is not UpdateOptions uo)
-        {
-            throw new InvalidCastException(
-                Errors.SelectOptionCastException);
-        }
-
-        return uo switch
-        {
-            {IgnorePrefix: true, Prefix: not null} => throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed),
-            {IgnorePrefix: false, Prefix: null} => $"{uo.Table}.",
-            _ => uo.Prefix is not null ? $"{uo.Prefix}." : string.Empty
-        };
-    }
 }
 

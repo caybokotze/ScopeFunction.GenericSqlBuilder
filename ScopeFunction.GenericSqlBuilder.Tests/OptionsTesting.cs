@@ -6,6 +6,7 @@ using static NExpect.Expectations;
 namespace ScopeFunction.GenericSqlBuilder.Tests;
 
 [TestFixture]
+[Parallelizable(ParallelScope.None)]
 public class OptionsTesting
 {
     [Test]
@@ -31,7 +32,7 @@ public class OptionsTesting
                 nameof(Person.LastName)
             }, o => o.WithPropertyCasing(Casing.SnakeCase))
             .From("people")
-            .Where(nameof(Person.Age).ToLower(), o => o.Equals("21"))
+            .Where<Person>(f => nameof(f.Age), o => o.Equals("21"))
             .Build();
         
         var statement3 = new SqlBuilder()

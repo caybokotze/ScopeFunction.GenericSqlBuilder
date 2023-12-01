@@ -87,7 +87,7 @@ public class Statement
         _statements.RemoveAt(_statements.Count-1);
     }
 
-    protected void TrimLast(bool trimTrailingComma = false)
+    private void TrimLast(bool trimTrailingComma = false)
     {
         _statements[^1] = _statements[^1].Trim();
 

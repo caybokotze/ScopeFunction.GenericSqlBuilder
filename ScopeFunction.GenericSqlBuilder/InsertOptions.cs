@@ -129,7 +129,6 @@ public class InsertOptions : IInsertOptions
     public Casing PropertyCase { get; private set; }
     public Variant Variant { get; private set; }
 
-
     public IInsertOptions WithSqlVariant(Variant variant)
     {
         Variant = variant;

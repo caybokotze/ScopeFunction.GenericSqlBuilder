@@ -25,15 +25,11 @@ public class UpdateStatementTests
                         .Update<Person>("people", o =>
                         {
                             o.WithProperty("Foo");
-                            o.WithoutPropertyPrefix();
                         })
-                        .Set(s => new[]
-                        {
-                            nameof(s.FirstName),
-                            nameof(s.LastName),
-                        })
+                        .Set()
                         .Where("Id = 21")
                         .Build();
+                    
                     // act
                     const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName WHERE Id = 21";
                     // assert
@@ -52,7 +48,6 @@ public class UpdateStatementTests
                         .Update<Person>("people", o =>
                         {
                             o.WithoutProperty(nameof(Person.FirstName));
-                            o.WithoutPropertyPrefix();
                         })
                         .Set()
                         .Where("Id = 21")
@@ -75,7 +70,6 @@ public class UpdateStatementTests
                         .Update<Person>("people", o =>
                         {
                             o.WithPropertyCasing(Casing.UpperCase);
-                            o.WithoutPropertyPrefix();
                         })
                         .Set()
                         .Where("Id = 21")
@@ -99,7 +93,6 @@ public class UpdateStatementTests
                         .Update<Person>("people", o =>
                         {
                             o.WithPropertyCasing(Casing.SnakeCase);
-                            o.WithoutPropertyPrefix();
                         })
                         .Set()
                         .Where("Id = 21")
@@ -124,7 +117,6 @@ public class UpdateStatementTests
                             o.WithPropertyCasing(Casing.SnakeCase);
                             o.WithProperty("Foo");
                             o.WithoutProperty("Age");
-                            o.WithPropertyPrefix("p");
                         })
                         .Set()
                         .Where("Id = 21")
@@ -210,9 +202,8 @@ public class UpdateStatementTests
                 {
                     // arrange
                     var sql = new SqlBuilder()
-                        .Update("people p", o =>
+                        .Update("people", o =>
                         {
-                            o.WithPropertyPrefix("p");
                             o.WithPropertyCasing(Casing.SnakeCase);
                         })
                         .Set(new []

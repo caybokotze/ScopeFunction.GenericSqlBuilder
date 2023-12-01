@@ -745,7 +745,7 @@ public class SelectStatementTests
                         o.WithPropertyPrefix("p");
                         o.WithPropertyCasing(Casing.SnakeCase);
                     })
-                    .Append("(SELECT COUNT(*) FROM people) as person_count")
+                    .Append("(SELECT COUNT(*) FROM people) as person_count", true)
                     .AppendSelect(a =>
                         a.Select<Manager>(o => o.WithPropertyPrefix("m")))
                     .From("people")

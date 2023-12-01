@@ -5,7 +5,7 @@ public interface IUpdateStatementBuilder
     UpdateStatement Update(string table);
     UpdateStatement Update(string table, Action<IUpdateOptions> options);
     UpdateStatement<T> Update<T>(string table) where T : new();
-    UpdateStatement<T> Update<T>(string table, Action<IUpdateOptions> options) where T : new();
+    UpdateStatement<T> Update<T>(string table, Action<IUpdateOptions<T>> options) where T : new();
 }
 
 public class UpdateStatementBuilder : Statement, IUpdateStatementBuilder
@@ -44,11 +44,11 @@ public class UpdateStatementBuilder : Statement, IUpdateStatementBuilder
         });
     }
     
-    public UpdateStatement<T> Update<T>(string table, Action<IUpdateOptions> options) where T : new()
+    public UpdateStatement<T> Update<T>(string table, Action<IUpdateOptions<T>> options) where T : new()
     {
         AddStatement($"UPDATE {table} ");
         
-        var updateOptions = new UpdateOptions
+        var updateOptions = new UpdateOptions<T>
         {
             Table = table
         };

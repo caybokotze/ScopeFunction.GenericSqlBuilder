@@ -27,9 +27,17 @@ public class SelectStatement : Statement
         return this;
     }
     
-    public SelectStatement Append(string clause)
+    public SelectStatement Append(string clause, bool withTrailingComma = false)
     {
-        AddStatement($"{clause}, ");
+        if (withTrailingComma)
+        {
+            AddStatement($"{clause}, ");
+        }
+
+        if (!withTrailingComma)
+        {
+            AddStatement($"{clause} ");
+        }
 
         return this;
     }
@@ -40,13 +48,7 @@ public class SelectStatement : Statement
         {
             throw new InvalidCastException(Errors.SelectOptionCastException);
         }
-
-        if (selectOptions.AppendAfterFromStatement.Count == 0)
-        {
-            TrimLast(true);
-            AddStatement(" ");
-        }
-
+        
         if (selectOptions.AppendAfterFromStatement.Count > 0)
         {
             foreach (var appendableAfterFrom in selectOptions.AppendAfterFromStatement)

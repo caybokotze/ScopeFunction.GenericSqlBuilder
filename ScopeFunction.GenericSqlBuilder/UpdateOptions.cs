@@ -1,9 +1,10 @@
-﻿using ScopeFunction.GenericSqlBuilder.Common;
+﻿using System.Linq.Expressions;
+using ScopeFunction.GenericSqlBuilder.Common;
 using ScopeFunction.GenericSqlBuilder.Enums;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
-public interface IUpdateOptions : IOptions
+public interface IUpdateOptions
 {
     IUpdateOptions WithSqlVariant(Variant variant);
     IUpdateOptions WithPropertyCasing(Casing casing);
@@ -18,13 +19,34 @@ public interface IUpdateOptions : IOptions
     IUpdateOptions WithoutProperties(IEnumerable<string> properties);
 }
 
-public class UpdateOptions : Options, IUpdateOptions
+public interface IUpdateOptions<T> : IUpdateOptions
+{
+    IUpdateOptions<T> WithoutProperties(params Expression<Func<T, object?>>[] properties);
+}
+
+public class UpdateOptions<T> : UpdateOptions, IUpdateOptions<T>
+{
+    public IUpdateOptions<T> WithoutProperties(params Expression<Func<T, object?>>[] properties)
+    {
+        foreach (var segment in properties)
+        {
+            if (segment.Body is MemberExpression memberExpression)
+            {
+                var name = memberExpression.Member.Name;
+                RemovedProperties.Add(name);
+            }
+        }
+
+        return this;
+    }
+}
+
+public class UpdateOptions : IUpdateOptions
 {
     public UpdateOptions()
     {
         RemovedProperties = Enumerable.Empty<string>().ToList();
         AddedProperties = Enumerable.Empty<string>().ToList();
-        
         var configuration = GenericQueryBuilderSettings.GenericSqlBuilderConfiguration;
         Variant = configuration.Variant;
         PropertyCase = configuration.Casing;
@@ -72,15 +94,5 @@ public class UpdateOptions : Options, IUpdateOptions
     {
         RemovedProperties.AddRange(properties);
         return this;
-    }
-
-    public void WithPropertyPrefix(string prefix)
-    {
-        Prefix = prefix;
-    }
-
-    public void WithoutPropertyPrefix()
-    {
-        IgnorePrefix = true;
     }
 }

@@ -20,7 +20,7 @@ public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpd
         return new UpdateStatementBuilder().Update<T>(table);
     }
 
-    public UpdateStatement<T> Update<T>(string table, Action<IUpdateOptions> options) where T : new()
+    public UpdateStatement<T> Update<T>(string table, Action<IUpdateOptions<T>> options) where T : new()
     {
         return new UpdateStatementBuilder().Update<T>(table, options);
     }
@@ -72,6 +72,7 @@ public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpd
     {
         var selectOptions = new SelectOptions();
         options(selectOptions);
+        
         return new SelectStatement(new Statement("SELECT * ", StatementType.Select), selectOptions);
     }
 

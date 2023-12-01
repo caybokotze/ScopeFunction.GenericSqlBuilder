@@ -14,6 +14,7 @@ public class SelectWhereStatement : Statement, IBuildable
 
     public string Build()
     {
+        SetSelectOptions(_options);
         return BuildStatement();
     }
 
