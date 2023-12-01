@@ -78,11 +78,16 @@ public class UpdateStatement<T> : Statement where T : new()
         
         AddStatement("SET ");
         
-        var segments = StatementBuilder.GetUpdateProperties<T>(uo);
+        var properties = StatementBuilder.GetUpdateProperties<T>(uo);
 
-        foreach (var segment in segments)
+        foreach (var property in properties)
         {
-            AddStatement($"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}");
+            if (uo.RemovedProperties.Contains(property))
+            {
+                continue;
+            }
+            
+            AddStatement($"{GetPropertyVariant(ConvertCase(property, uo.PropertyCase), uo.Variant)} = @{property}");
             AddStatement(", ");
         }
         

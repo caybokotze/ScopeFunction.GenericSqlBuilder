@@ -24,6 +24,7 @@ public class UpdateStatementTests
                     var sql = new SqlBuilder()
                         .Update<Person>("people", o =>
                         {
+                            o.WithoutProperties(w => w.Age);
                             o.WithProperty("Foo");
                         })
                         .Set()
@@ -31,7 +32,8 @@ public class UpdateStatementTests
                         .Build();
                     
                     // act
-                    const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName WHERE Id = 21";
+                    const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName, Foo = @Foo WHERE Id = 21";
+                    
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
@@ -122,7 +124,7 @@ public class UpdateStatementTests
                         .Where("Id = 21")
                         .Build();
                     // act
-                    const string expected = "UPDATE people SET p.first_name = @FirstName, p.last_name = @LastName, p.foo = @Foo WHERE Id = 21";
+                    const string expected = "UPDATE people SET first_name = @FirstName, last_name = @LastName, foo = @Foo WHERE Id = 21";
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
@@ -139,10 +141,11 @@ public class UpdateStatementTests
                 var sql = new SqlBuilder()
                     .Update<Person>("people")
                     .Set()
-                    .Where("people.Id = 21")
+                    .Where("Id = 21")
                     .Build();
+                
                 // act
-                const string expected = "UPDATE people SET people.FirstName = @FirstName, people.LastName = @LastName, people.Age = @Age WHERE people.Id = 21";
+                const string expected = "UPDATE people SET FirstName = @FirstName, LastName = @LastName, Age = @Age WHERE Id = 21";
                 // assert
                 Expect(sql).To.Equal(expected);
             }
@@ -175,12 +178,12 @@ public class UpdateStatementTests
                 {
                     // arrange
                     var sql = new SqlBuilder()
-                        .Update<Person>("people")
+                        .Update<Person>("people", o => o.WithSqlVariant(Variant.MySql))
                         .Set()
                         .Where("Id = 21")
                         .Build();
                     // act
-                    const string expected = "UPDATE people SET people.`first_name` = @FirstName, people.`last_name` = @LastName, people.`age` = @Age WHERE Id = 21";
+                    const string expected = "UPDATE people SET `first_name` = @FirstName, `last_name` = @LastName, `age` = @Age WHERE Id = 21;";
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
@@ -213,7 +216,7 @@ public class UpdateStatementTests
                         .Where("Id = 21")
                         .Build();
                     // act
-                    const string expected = "UPDATE people p SET p.first_name = @FirstName WHERE Id = 21";
+                    const string expected = "UPDATE people SET first_name = @FirstName WHERE Id = 21";
                     // assert
                     Expect(sql).To.Equal(expected);
                 }
