@@ -11,7 +11,7 @@ public class UpdateStatement : Statement
 {
     private readonly IUpdateOptions _options;
 
-    public UpdateStatement(Statement statement, IUpdateOptions options) : base(statement, options)
+    public UpdateStatement(Statement statement, IUpdateOptions options) : base(statement)
     {
         _options = options;
     }
@@ -58,7 +58,7 @@ public class UpdateStatement<T> : Statement where T : new()
 {
     private readonly IUpdateOptions _options;
 
-    public UpdateStatement(Statement statement, IUpdateOptions options) : base(statement, options)
+    public UpdateStatement(Statement statement, IUpdateOptions options) : base(statement)
     {
         _options = options;
     }

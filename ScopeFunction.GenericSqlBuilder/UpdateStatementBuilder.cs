@@ -10,7 +10,7 @@ public interface IUpdateStatementBuilder
 
 public class UpdateStatementBuilder : Statement, IUpdateStatementBuilder
 {
-    public UpdateStatementBuilder() : base(new Statement(string.Empty), new UpdateOptions())
+    public UpdateStatementBuilder() : base(new Statement(string.Empty, StatementType.Update))
     {
         
     }

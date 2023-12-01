@@ -4,7 +4,7 @@ public class UpdateSetStatement : Statement
 {
     private readonly IUpdateOptions _options;
 
-    public UpdateSetStatement(Statement statement, IUpdateOptions options) : base(statement, options)
+    public UpdateSetStatement(Statement statement, IUpdateOptions options) : base(statement)
     {
         _options = options;
     }

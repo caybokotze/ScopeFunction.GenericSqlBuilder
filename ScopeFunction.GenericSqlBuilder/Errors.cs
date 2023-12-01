@@ -8,4 +8,5 @@ public class Errors
     public const string InsertOptionCastException = "The insert options can not be cast from the IInsertOptions interface to a instance of type (T)";
     public const string UpdateOptionCastException = "The update options can not be cast from the IUpdateOptions interface to a instance of type (T)";
     public const string CosmosDbLastInsertNotSupported = "CosmosDb does not support the LAST INSERT ID option. Use another SQL variant OR remove that option";
+    public const string UpdateAndNotUpdateNotAllowed = "Using the .WithUpdateOnDuplicateKey extension and the WithUpdateOnDuplicateKeyIgnore extension simultaneously is not allowed.";
 }

@@ -4,7 +4,7 @@ using ScopeFunction.GenericSqlBuilder.Enums;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
-public interface IInsertOptions : IOptions
+public interface IInsertOptions
 {
     IInsertOptions WithSqlVariant(Variant variant);
     IInsertOptions WithPropertyCasing(Casing casing);
@@ -18,92 +18,183 @@ public interface IInsertOptions : IOptions
     /// </summary>
     /// <returns></returns>
     IInsertOptions WithUpdateOnDuplicateKey();
+
+    /// <summary>
+    /// This overload allows for the properties to be 'SET' which should be added to the update statement.
+    /// If include is set to true, only the properties provided will be included in the update statement.
+    /// If include is set to false, every property except the properties provided will be included in the update statement. 
+    /// </summary>
+    /// <param name="properties"></param>
+    /// <returns></returns>
+    IInsertOptions WithUpdateOnDuplicateKey(params string[] properties);
     
     /// <summary>
-    /// This overload will only add a 'SET' for the provided properties.
+    /// This overload exists to remove properties from the update 'SET' statement on insert
+    /// Only the values provided will be ignored when compared to the values provided in the insert statement.
     /// </summary>
-    /// <param name="onlySet"></param>
+    /// <param name="properties"></param>
     /// <returns></returns>
-    IInsertOptions WithUpdateOnDuplicateKey(params string[] onlySet);
+    IInsertOptions WithUpdateOnDuplicateKeyIgnore(params string[] properties);
     IInsertOptions WithInsertIgnore();
     IInsertOptions WithAppendedLastInsertedId();
 }
 
-public interface IGenericInsertOptions<T> : IInsertOptions
+public interface IInsertOptions<T> : IInsertOptions
 {
-    IInsertOptions WithUpdateOnDuplicateKey(Func<T, string[]> properties);
+    /// <summary>
+    /// This overload allows for the properties to be 'SET' which should be added to the update statement.
+    /// If properties are provided it will override all properties built up by the generic builder. (Use with caution)
+    /// </summary>
+    /// <param name="properties"></param>
+    /// <returns></returns>
     IInsertOptions WithUpdateOnDuplicateKey(params Expression<Func<T, object?>>[] properties);
+    
+    /// <summary>
+    /// This overload exists to remove properties from the update 'SET' statement on insert
+    /// The update statement will be built with the generic builder and only the values provided will be ignored.
+    /// </summary>
+    /// <param name="properties"></param>
+    /// <returns></returns>
+    IInsertOptions WithUpdateOnDuplicateKeyIgnore(params Expression<Func<T, object?>>[] properties);
+}
+
+public class InsertOptions<T> : InsertOptions, IInsertOptions<T>
+{
+    public IInsertOptions WithUpdateOnDuplicateKey(params Expression<Func<T, object?>>[] properties)
+    {
+        foreach (var segment in properties)
+        {
+            if (segment.Body is MemberExpression memberExpression)
+            {
+                var name = memberExpression.Member.Name;
+                UpdateOnDuplicateKey = true;
+                PropertiesToUpdate.Add(name);
+                continue;
+            }
+
+            if (segment.Body is UnaryExpression unaryExpression)
+            {
+                var name = (unaryExpression.Operand as MemberExpression)?.Member.Name ?? string.Empty;
+                UpdateOnDuplicateKey = true;
+                PropertiesToUpdate.Add(name);
+            }
+        }
+
+        return this;
+    }
+
+    public IInsertOptions WithUpdateOnDuplicateKeyIgnore(params Expression<Func<T, object?>>[] properties)
+    {
+        foreach (var segment in properties)
+        {
+            if (segment.Body is MemberExpression memberExpression)
+            {
+                var name = memberExpression.Member.Name;
+                UpdateOnDuplicateKey = true;
+                PropertiesToNotUpdate.Add(name);
+                continue;
+            }
+
+            if (segment.Body is UnaryExpression unaryExpression)
+            {
+                var name = (unaryExpression.Operand as MemberExpression)?.Member.Name ?? string.Empty;
+                UpdateOnDuplicateKey = true;
+                PropertiesToNotUpdate.Add(name);
+            }
+        }
+
+        return this;
+    }
 }
 
 public class InsertOptions : IInsertOptions
 {
     public InsertOptions()
     {
-        AfterInto = new List<string>();
-        OnlySet = new List<string>();
+        AppendAfterIntoStatement = new List<string>();
+        PropertiesToUpdate = new List<string>();
+        PropertiesToNotUpdate = new List<string>();
+        AddedProperties = new List<string>();
+        RemovedProperties = new List<string>();
     }
     
-    public List<string> AfterInto { get; set; }
-    public List<string> OnlySet { get; private set; }
-    
-    public void WithPropertyPrefix(string prefix)
-    {
-        throw new NotImplementedException();
-    }
+    public List<string> AppendAfterIntoStatement { get; }
+    public List<string> PropertiesToUpdate { get; }
+    public List<string> PropertiesToNotUpdate { get; }
+    public List<string> AddedProperties { get; }
+    public List<string> RemovedProperties { get; }
+    public bool InsertIgnore { get; private set; }
+    public bool AppendLastInsertedId { get; private set; }
+    public bool UpdateOnDuplicateKey { get; protected set; }
+    public Casing PropertyCase { get; private set; }
+    public Variant Variant { get; private set; }
 
-    public void WithoutPropertyPrefix()
-    {
-        throw new NotImplementedException();
-    }
 
     public IInsertOptions WithSqlVariant(Variant variant)
     {
-        throw new NotImplementedException();
+        Variant = variant;
+        return this;
     }
 
     public IInsertOptions WithPropertyCasing(Casing casing)
     {
-        throw new NotImplementedException();
+        PropertyCase = casing;
+        return this;
     }
 
     public IInsertOptions WithProperty(string property)
     {
-        throw new NotImplementedException();
+        AddedProperties.Add(property);
+        return this;
     }
 
     public IInsertOptions WithoutProperty(string property)
     {
-        throw new NotImplementedException();
+        RemovedProperties.Add(property);
+        return this;
     }
 
     public IInsertOptions WithProperties(IEnumerable<string> properties)
     {
-        throw new NotImplementedException();
+        AddedProperties.AddRange(properties);
+        return this;
     }
 
     public IInsertOptions WithoutProperties(IEnumerable<string> properties)
     {
-        throw new NotImplementedException();
+        RemovedProperties.AddRange(properties);
+        return this;
     }
 
     public IInsertOptions WithUpdateOnDuplicateKey()
     {
-        throw new NotImplementedException();
+        UpdateOnDuplicateKey = true;
+        return this;
     }
 
-    public IInsertOptions WithUpdateOnDuplicateKey(params string[] onlySet)
+    public IInsertOptions WithUpdateOnDuplicateKey(params string[] properties)
     {
-        OnlySet.AddRange(onlySet);
+        PropertiesToUpdate.AddRange(properties);
+        UpdateOnDuplicateKey = true;
+        return this;
+    }
+
+    public IInsertOptions WithUpdateOnDuplicateKeyIgnore(params string[] properties)
+    {
+        PropertiesToNotUpdate.AddRange(properties);
+        UpdateOnDuplicateKey = true;
         return this;
     }
 
     public IInsertOptions WithInsertIgnore()
     {
-        throw new NotImplementedException();
+        InsertIgnore = true;
+        return this;
     }
 
     public IInsertOptions WithAppendedLastInsertedId()
     {
-        throw new NotImplementedException();
+        AppendLastInsertedId = true;
+        return this;
     }
 }

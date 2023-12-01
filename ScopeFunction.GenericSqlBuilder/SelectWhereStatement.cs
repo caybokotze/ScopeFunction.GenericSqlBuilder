@@ -7,9 +7,7 @@ public class SelectWhereStatement : Statement, IBuildable
 {
     private readonly ISelectOptions _options;
     
-    public SelectWhereStatement(
-        Statement statement, 
-        ISelectOptions options) : base(statement, options)
+    public SelectWhereStatement(Statement statement, ISelectOptions options) : base(statement)
     {
         _options = options;
     }

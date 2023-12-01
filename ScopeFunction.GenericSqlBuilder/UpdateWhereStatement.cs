@@ -4,7 +4,7 @@ public class UpdateWhereStatement : Statement, IBuildable
 {
     private readonly IUpdateOptions _options;
 
-    public UpdateWhereStatement(Statement statement, IUpdateOptions options) : base(statement, options)
+    public UpdateWhereStatement(Statement statement, IUpdateOptions options) : base(statement)
     {
         _options = options;
     }

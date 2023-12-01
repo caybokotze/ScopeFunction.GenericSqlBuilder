@@ -4,9 +4,7 @@ public class OrderByStatement : Statement
 {
     private readonly ISelectOptions _options;
 
-    public OrderByStatement(
-        Statement statement, 
-        ISelectOptions options) : base(statement, options)
+    public OrderByStatement(Statement statement, ISelectOptions options) : base(statement)
     {
         _options = options;
     }

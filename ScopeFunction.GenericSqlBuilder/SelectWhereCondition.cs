@@ -46,7 +46,7 @@ public class SelectWhereCondition : Statement, IWhereCondition
 {
     private readonly ISelectOptions _options;
 
-    public SelectWhereCondition(Statement statement, ISelectOptions options) : base(statement, options)
+    public SelectWhereCondition(Statement statement, ISelectOptions options) : base(statement)
     {
         _options = options;
     }
@@ -111,7 +111,7 @@ public class SelectWhereCondition : Statement, IWhereCondition
 
 public class UpdateWhereCondition : Statement, IWhereCondition
 {
-    public UpdateWhereCondition(Statement statement, IUpdateOptions options) : base(statement, options)
+    public UpdateWhereCondition(Statement statement, IUpdateOptions options) : base(statement)
     {
         
     }

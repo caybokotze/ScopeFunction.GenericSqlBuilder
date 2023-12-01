@@ -1,4 +1,6 @@
-﻿namespace ScopeFunction.GenericSqlBuilder;
+﻿using System.Linq.Expressions;
+
+namespace ScopeFunction.GenericSqlBuilder;
 
 public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpdateStatementBuilder
 {
@@ -41,7 +43,7 @@ public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpd
         return new InsertStatementBuilder().Insert(properties);
     }
 
-    public InsertStatement Insert<T>(Func<T, string[]> properties, Action<IInsertOptions> options) where T : class, new()
+    public InsertStatement Insert<T>(Func<T, string[]> properties, Action<IInsertOptions<T>> options) where T : class, new()
     {
         return new InsertStatementBuilder().Insert(properties, options);
     }
@@ -51,7 +53,7 @@ public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpd
         return new InsertStatementBuilder().Insert<T>();
     }
 
-    public InsertStatement Insert<T>(Action<IInsertOptions> options) where T : class, new()
+    public InsertStatement Insert<T>(Action<IInsertOptions<T>> options) where T : class, new()
     {
         return new InsertStatementBuilder().Insert<T>(options);
     }
@@ -63,19 +65,19 @@ public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpd
     
     public SelectStatement SelectAll()
     {
-        return new SelectStatement(new Statement("SELECT * "), new SelectOptions());
+        return new SelectStatement(new Statement("SELECT * ", StatementType.Select), new SelectOptions());
     }
     
     public SelectStatement SelectAll(Action<ISelectOptions> options)
     {
         var selectOptions = new SelectOptions();
         options(selectOptions);
-        return new SelectStatement(new Statement("SELECT * "), selectOptions);
+        return new SelectStatement(new Statement("SELECT * ", StatementType.Select), selectOptions);
     }
 
     public SelectStatement Select(string clause)
     {
-        return new SelectStatement(new Statement($"SELECT {clause}"), new SelectOptions());
+        return new SelectStatement(new Statement($"SELECT {clause}", StatementType.Select), new SelectOptions());
     }
 
     public SelectStatement Select(string[] properties)

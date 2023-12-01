@@ -20,7 +20,7 @@ public class SelectOptions : Options, ISelectOptions
     {
         AddedProperties = new List<string>();
         RemovedProperties = new List<string>();
-        AppendAfterFrom = new List<AppendableAfterFrom>();
+        AppendAfterFromStatement = new List<AppendableAfterFrom>();
         var configuration = GenericQueryBuilderSettings.GenericSqlBuilderConfiguration;
         Variant = configuration.Variant;
         PropertyCase = configuration.Casing;
@@ -28,13 +28,13 @@ public class SelectOptions : Options, ISelectOptions
     
     public List<string> AddedProperties { get; }
     public List<string> RemovedProperties { get; }
+    public List<AppendableAfterFrom> AppendAfterFromStatement { get; set; }
     public Casing PropertyCase { get; private set; }
         
     public Variant Variant { get; private set; }
         
     public int? TopValue { get; private set; }
         
-    public List<AppendableAfterFrom> AppendAfterFrom { get; set; }
     public bool IsAppendWhere { get; set; }
     public bool IsAppendSelect { get; set; }
 

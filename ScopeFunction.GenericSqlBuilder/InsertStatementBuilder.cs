@@ -8,52 +8,70 @@ public interface IInsertStatementBuilder
     InsertStatement Insert(string[] properties);
     InsertStatement Insert(string[] properties, Action<IInsertOptions> options);
     InsertStatement Insert<T>(Func<T, string[]> properties) where T : class, new();
-    InsertStatement Insert<T>(Func<T, string[]> properties, Action<IInsertOptions> options) where T : class, new();
+    InsertStatement Insert<T>(Func<T, string[]> properties, Action<IInsertOptions<T>> options) where T : class, new();
     InsertStatement Insert<T>() where T : class, new ();
-    InsertStatement Insert<T>(Action<IInsertOptions> options) where T : class, new();
+    InsertStatement Insert<T>(Action<IInsertOptions<T>> options) where T : class, new();
 }
 
 public class InsertStatementBuilder : Statement, IInsertStatementBuilder
 {
-    private readonly IInsertOptions _options;
-    
-    public InsertStatementBuilder(Statement statement, IInsertOptions options) : base(statement, options)
+    public InsertStatementBuilder() : base("INSERT ", StatementType.Insert)
     {
-        _options = options;
-    }
-
-    public InsertStatementBuilder() : base(new Statement("INSERT "), new InsertOptions())
-    {
-        _options = new InsertOptions();
     }
 
     public InsertStatement Insert(params string[] properties)
     {
-        throw new NotImplementedException();
+        var insertOptions = new InsertOptions();
+        insertOptions.AppendAfterIntoStatement.AddRange(properties);
+        return new InsertStatement(this, insertOptions);
     }
 
     public InsertStatement Insert(string[] properties, Action<IInsertOptions> options)
     {
-        throw new NotImplementedException();
+        var insertOptions = new InsertOptions();
+        options(insertOptions);
+        
+        insertOptions.AppendAfterIntoStatement.AddRange(properties);
+        return new InsertStatement(this, insertOptions);
     }
 
     public InsertStatement Insert<T>(Func<T, string[]> properties) where T : class, new()
     {
-        throw new NotImplementedException();
+        var insertOptions = new InsertOptions<T>();
+        insertOptions.AppendAfterIntoStatement.AddRange(properties.Invoke(new T()));
+        return new InsertStatement(this, insertOptions);
     }
 
-    public InsertStatement Insert<T>(Func<T, string[]> properties, Action<IInsertOptions> options) where T : class, new()
+    public InsertStatement Insert<T>(Func<T, string[]> properties, Action<IInsertOptions<T>> options) where T : class, new()
     {
-        throw new NotImplementedException();
+        
+        var insertOptions = new InsertOptions<T>();
+        options(insertOptions);
+        
+        insertOptions.AppendAfterIntoStatement.AddRange(properties.Invoke(new T()));
+        
+        return new InsertStatement(this, insertOptions);
     }
 
     public InsertStatement Insert<T>() where T : class, new()
     {
-        throw new NotImplementedException();
+        var properties = StatementBuilder.GetPropertyNames<T>();
+        
+        var insertOptions = new InsertOptions<T>();
+        
+        insertOptions.AppendAfterIntoStatement.AddRange(properties);
+        
+        return new InsertStatement(this, insertOptions);
     }
 
-    public InsertStatement Insert<T>(Action<IInsertOptions> options) where T : class, new()
+    public InsertStatement Insert<T>(Action<IInsertOptions<T>> options) where T : class, new()
     {
-        throw new NotImplementedException();
+        var properties = StatementBuilder.GetPropertyNames<T>();
+        
+        var insertOptions = new InsertOptions<T>();
+        options(insertOptions);
+        insertOptions.AppendAfterIntoStatement.AddRange(properties);
+        
+        return new InsertStatement(this, insertOptions);
     }
 }

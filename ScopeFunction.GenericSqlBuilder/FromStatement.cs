@@ -12,12 +12,12 @@ public class FromStatement : Statement, IBuildable
 
     public FromStatement(
         Statement statement,
-        ISelectOptions options) : base(statement, options)
+        ISelectOptions options) : base(statement)
     {
         _options = options;
     }
     
-    public FromStatement(Statement statement, ISelectOptions options, WhereOptions whereOptions) : base(statement, options)
+    public FromStatement(Statement statement, ISelectOptions options, WhereOptions whereOptions) : base(statement)
     {
         _options = options;
         _whereOptions = whereOptions;
@@ -25,6 +25,7 @@ public class FromStatement : Statement, IBuildable
     
     public string Build()
     {
+        SetSelectOptions(_options);
         return BuildStatement();
     }
 
@@ -267,8 +268,8 @@ public class FromStatement : Statement, IBuildable
                 break;
             case true:
                 AddStatement(applyPrefix && !string.IsNullOrEmpty(prefix) 
-                    ? $"{prefix}.{clause}" 
-                    : $"{clause} ");
+                    ? $"AND {prefix}.{clause}" 
+                    : $"AND {clause} ");
                 break;
         }
 
@@ -284,6 +285,7 @@ public class FromStatement : Statement, IBuildable
         }
         
         var whereOptions = new WhereOptions();
+        
         options(whereOptions);
         
         AddWhereOrSeparator(whereOptions);

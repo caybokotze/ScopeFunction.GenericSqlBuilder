@@ -4,7 +4,7 @@ public class JoinStatement : Statement
 {
     private readonly ISelectOptions _options;
 
-    public JoinStatement(Statement statement, ISelectOptions options) : base(statement, options)
+    public JoinStatement(Statement statement, ISelectOptions options) : base(statement)
     {
         _options = options;
     }

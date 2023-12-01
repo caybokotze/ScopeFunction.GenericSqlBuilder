@@ -8,7 +8,7 @@ public class SelectStatement : Statement
 {
     private readonly ISelectOptions _options;
 
-    public SelectStatement(Statement statement, ISelectOptions options) : base(statement, options)
+    public SelectStatement(Statement statement, ISelectOptions options) : base(statement)
     {
         _options = options;
     }
@@ -41,15 +41,15 @@ public class SelectStatement : Statement
             throw new InvalidCastException(Errors.SelectOptionCastException);
         }
 
-        if (selectOptions.AppendAfterFrom.Count == 0)
+        if (selectOptions.AppendAfterFromStatement.Count == 0)
         {
             TrimLast(true);
             AddStatement(" ");
         }
 
-        if (selectOptions.AppendAfterFrom.Count > 0)
+        if (selectOptions.AppendAfterFromStatement.Count > 0)
         {
-            foreach (var appendableAfterFrom in selectOptions.AppendAfterFrom)
+            foreach (var appendableAfterFrom in selectOptions.AppendAfterFromStatement)
             {
                 foreach (var property in appendableAfterFrom.Properties)
                 {

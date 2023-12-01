@@ -73,6 +73,32 @@ public class SelectStatementTests
                                 Expect(sut).To.Equal(expected);
                             }
                         }
+
+                        [TestFixture]
+                        public class WithAppendedWhere
+                        {
+                            [Test]
+                            public void ShouldAppendWhereWithAndStatement()
+                            {
+                                // arrange
+                                var sut = new SqlBuilder()
+                                    .Select<Person>(o =>
+                                    {
+                                        o.WithPropertyPrefix("p");
+                                    })
+                                    .From("people p")
+                                    .Where("p.Id = 12")
+                                    .AppendWhere(w => w.Where("p.Age = @Age", o => o.WithAndSeparator()))
+                                    .Build();
+                                
+                                // act
+                                var expected =
+                                    "SELECT p.FirstName, p.LastName, p.Age FROM people p WHERE p.Id = 12 AND p.Age = @Age";
+                                
+                                // assert
+                                Expect(sut).To.Equal(expected);
+                            }
+                        }
                     }
 
                     [TestFixture]

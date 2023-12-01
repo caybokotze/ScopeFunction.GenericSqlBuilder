@@ -14,12 +14,12 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
 {
     private readonly ISelectOptions _options;
 
-    public SelectStatementBuilder(Statement statement, ISelectOptions options) : base(statement, options)
+    public SelectStatementBuilder(Statement statement, ISelectOptions options) : base(statement)
     {
         _options = options;
     }
     
-    public SelectStatementBuilder() : base(new Statement(string.Empty), new SelectOptions())
+    public SelectStatementBuilder() : base(string.Empty, StatementType.Select)
     {
         _options = new SelectOptions();
     }
@@ -36,14 +36,14 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
             AddStatement("SELECT ");
             return new SelectStatement(this, new SelectOptions
             {
-                AppendAfterFrom = new List<AppendableAfterFrom>
+                AppendAfterFromStatement = new List<AppendableAfterFrom>
                 {
                     new(properties)
                 }
             });
         }
 
-        so.AppendAfterFrom.Add(new AppendableAfterFrom(properties, so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties, so.Prefix));
         return new SelectStatement(this, so);
     }
     
@@ -65,7 +65,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
                 sql = $"SELECT TOP {selectOptions.TopValue.ToString()} ";
             }
         
-            selectOptions.AppendAfterFrom.Add(new AppendableAfterFrom(properties, selectOptions.Prefix));
+            selectOptions.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties, selectOptions.Prefix));
             AddStatement(sql);
             
             return new SelectStatement(this, selectOptions);
@@ -73,7 +73,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
         
         options(_options);
 
-        so.AppendAfterFrom.Add(new AppendableAfterFrom(properties, so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties, so.Prefix));
 
         return new SelectStatement(this, so);
     }
@@ -93,14 +93,14 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
             
             return new SelectStatement(this, new SelectOptions
             {
-                AppendAfterFrom = new List<AppendableAfterFrom>
+                AppendAfterFromStatement = new List<AppendableAfterFrom>
                 {
                     new(propList)
                 }
             });
         }
 
-        so.AppendAfterFrom.Add(new AppendableAfterFrom(properties(new T()), so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), so.Prefix));
         return new SelectStatement(this, so);
     }
     
@@ -116,7 +116,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
             var selectOptions = new SelectOptions();
             options(selectOptions);
 
-            selectOptions.AppendAfterFrom.Add(new AppendableAfterFrom(properties(new T()), selectOptions.Prefix));
+            selectOptions.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), selectOptions.Prefix));
         
             var sql = "SELECT ";
             if (selectOptions.TopValue is not null)
@@ -130,7 +130,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
 
         options(_options);
 
-        so.AppendAfterFrom.Add(new AppendableAfterFrom(properties(new T()), so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), so.Prefix));
         return new SelectStatement(this, so);
     }
     
@@ -147,7 +147,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
         {
             var selectOptions = new SelectOptions
             {
-                AppendAfterFrom = new List<AppendableAfterFrom>
+                AppendAfterFromStatement = new List<AppendableAfterFrom>
                 {
                     new(properties.ToArray())
                 }
@@ -157,7 +157,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
             return new SelectStatement(this, selectOptions);
         }
 
-        so.AppendAfterFrom.Add(new AppendableAfterFrom(properties.ToArray(), so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties.ToArray(), so.Prefix));
         return new SelectStatement(this, so);
     }
 
@@ -183,7 +183,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
             AddStatement(sql);
 
             selectOptions
-                .AppendAfterFrom
+                .AppendAfterFromStatement
                 .Add(new AppendableAfterFrom(StatementBuilder.GetSelectProperties<T>(selectOptions).ToArray(),
                     selectOptions.Prefix));
             
@@ -192,7 +192,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
 
         options(_options);
 
-        so.AppendAfterFrom.Add(new AppendableAfterFrom(StatementBuilder.GetSelectProperties<T>(so).ToArray(), so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(StatementBuilder.GetSelectProperties<T>(so).ToArray(), so.Prefix));
         return new SelectStatement(this, so);
     }
 }
