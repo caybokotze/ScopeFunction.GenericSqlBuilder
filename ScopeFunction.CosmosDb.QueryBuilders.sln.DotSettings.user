@@ -35,12 +35,8 @@
     &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.UpdateStatementTests+WithGenericBuilder+WithOptions+WithoutProperty.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e2edb1d8_002D11f2_002D491b_002Dbf3a_002D2e496a77decd/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldReturnExpectedStatement #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.InsertStatementTests+WithoutGenericBuilder+WithoutOptions.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.UpdateStatementTests+WithGenericBuilder+WithOptions+WithAppendProperty.ShouldReturnExpectedStatement&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::71F7B8B7-3147-4548-A77E-4D479E9250C5::net6.0::ScopeFunction.GenericSqlBuilder.Tests.SelectStatementTests+Select+WithGenericReflectiveBuilder+WithSelectOptions+WithWhereClause+WithWhereOptions+WithAppendedWhere.ShouldAppendWhereWithAndStatement&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e2edb1d8_002D11f2_002D491b_002Dbf3a_002D2e496a77decd/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShouldReturnExpectedStatement #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\code\personal\ScopeFunction.CosmosDb.QueryBuilders\ScopeFunction.GenericSqlBuilder.Tests" Presentation="&amp;lt;ScopeFunction.GenericSqlBuilder.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=fd11c280_002D11b6_002D4ffe_002Dbbad_002D50d537f2f72a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ShouldReturnExpectedStatement #9" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Code\personal\ScopeFunction.GenericSqlBuilder\ScopeFunction.GenericSqlBuilder.Tests" Presentation="&amp;lt;ScopeFunction.GenericSqlBuilder.Tests&amp;gt;" /&gt;&#xD;

@@ -99,6 +99,34 @@ public class SelectStatementTests
                                 Expect(sut).To.Equal(expected);
                             }
                         }
+                        
+                        [TestFixture]
+                        public class WithAppendedWhereAndNestedWhere
+                        {
+                            [Test]
+                            public void ShouldReturnExpectedQuery()
+                            {
+                                // arrange
+                                var sql = new SqlBuilder()
+                                    .Select("o.id")
+                                    .From("business_orders o")
+                                    .LeftJoin("business_customers c")
+                                    .On("c.id = o.customer_id")
+                                    .Where("o.business_id = @BusinessId")
+                                    .Append("AND")
+                                    .AppendWhereIf(() => true, f =>
+                                        f.NestedWhere(o =>
+                                        {
+                                            o.Where("c.email LIKE @Filter", w => w.WithoutSeparator());
+                                        }))
+                                    .Build();
+                                
+                                // act
+                                var expected = "SELECT o.id FROM business_orders o LEFT JOIN business_customers c ON c.id = o.customer_id WHERE o.business_id = @BusinessId AND ( c.email LIKE @Filter )";
+                                // assert
+                                Expect(expected).To.Equal(sql);
+                            }
+                        }
                     }
 
                     [TestFixture]

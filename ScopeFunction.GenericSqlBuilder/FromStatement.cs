@@ -87,6 +87,10 @@ public class FromStatement : Statement, IBuildable
                 AddStatement("WHERE ");
                 break;
             case true when _whereOptions is null:
+                if (whereOptions.HasNoSeparator)
+                {
+                    break;
+                }
                 AddStatement($"{GetSeparationClause(whereOptions)} ");
                 break;
         }

@@ -21,6 +21,8 @@ public interface IWhereOptions : IOptions
     /// Separate where clause items with AND
     /// </summary>
     public void WithAndSeparator();
+
+    public void WithoutSeparator();
 }
 
 public class WhereOptions : Options, IWhereOptions
@@ -28,6 +30,8 @@ public class WhereOptions : Options, IWhereOptions
     public bool HasOuterGroup { get; set; }
     public bool HasOrSeparator { get; set; }
     public bool HasAndSeparator { get; set; }
+    
+    public bool HasNoSeparator { get; set; }
 
     public void WithOuterGroup()
     {
@@ -42,6 +46,13 @@ public class WhereOptions : Options, IWhereOptions
     public void WithAndSeparator()
     {
         HasAndSeparator = true;
+    }
+
+    public void WithoutSeparator()
+    {
+        HasAndSeparator = false;
+        HasOrSeparator = false;
+        HasNoSeparator = true;
     }
 
     public void WithPropertyPrefix(string prefix)

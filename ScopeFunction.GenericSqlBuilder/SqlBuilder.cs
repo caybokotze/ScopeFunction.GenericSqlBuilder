@@ -78,7 +78,7 @@ public class SqlBuilder : ISelectStatementBuilder, IInsertStatementBuilder, IUpd
 
     public SelectStatement Select(string clause)
     {
-        return new SelectStatement(new Statement($"SELECT {clause}", StatementType.Select), new SelectOptions());
+        return new SelectStatement(new Statement($"SELECT {clause} ", StatementType.Select), new SelectOptions());
     }
 
     public SelectStatement Select(string[] properties)
