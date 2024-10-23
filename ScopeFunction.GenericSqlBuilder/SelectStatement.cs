@@ -53,8 +53,23 @@ public class SelectStatement : Statement
         {
             foreach (var appendableAfterFrom in selectOptions.AppendAfterFromStatement)
             {
+                if (selectOptions.SplitOn is not null)
+                {
+                    AddStatement(
+                        $"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(ConvertCase(selectOptions.SplitOn, selectOptions.PropertyCase), selectOptions.Variant)}");
+                    AddStatement(", ");
+                }
+                
                 foreach (var property in appendableAfterFrom.Properties)
                 {
+                    if (selectOptions.SplitOn is not null)
+                    {
+                        if (property.Equals(selectOptions.SplitOn, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            continue;
+                        }    
+                    }
+                    
                     AddStatement($"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
                     AddStatement(", ");
                 }

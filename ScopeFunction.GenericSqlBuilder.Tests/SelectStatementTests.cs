@@ -237,6 +237,34 @@ public class SelectStatementTests
                 [TestFixture]
                 public class WithoutWhereClause
                 {
+                    [TestFixture]
+                    public class WithSpecifiedSplitOn
+                    {
+                        [Test]
+                        public void ShouldAddSplitOnToProvidedProperty()
+                        {
+                            // arrange
+                            var sut = new SqlBuilder()
+                                .Select<Person>(o =>
+                                {
+                                    o.WithSplitOn(nameof(Person.Age));
+                                    o.WithPropertyPrefix("p");
+                                })
+                                .AppendSelect(a =>
+                                {
+                                    a.Select<Car>(o => o.WithPropertyPrefix("c"));
+                                })
+                                .From("p")
+                                .LeftJoin("c")
+                                .On("c.id = p.car_id")
+                                .Build();
+                            // act
+                            const string expected = "SELECT p.Age, p.FirstName, p.LastName, c.Age, c.Make, c.Model, c.Year FROM p LEFT JOIN c ON c.id = p.car_id";
+                            // assert
+                            Expect(expected).To.Equal(sut);
+                        }
+                    }
+                    
                     [Test]
                     public void ShouldReturnExpectedStatement()
                     {
@@ -282,6 +310,27 @@ public class SelectStatementTests
                 [TestFixture]
                 public class WithAppendSelect
                 {
+                    [TestFixture]
+                    public class WithSplitOnOption
+                    {
+                        [Test]
+                        public void ShouldReturnExpectedStatement()
+                        {
+                            // arrange
+                            var sut = new SqlBuilder()
+                                .Select<Person>(o =>
+                                {
+                                    o.WithSplitOn(nameof(Person.Age));
+                                })
+                                .From("p")
+                                .Build();
+                            // act
+                            const string expected = "SELECT p.Age, p.FirstName, p.LastName FROM p";
+                            // assert
+                            Expect(expected).To.Equal(sut);
+                        }
+                    }
+                    
                     [Test]
                     public void ShouldReturnExpectedResult()
                     {
@@ -1957,6 +2006,14 @@ public class Person
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
+    public int Age { get; set; }
+}
+
+public class Car
+{
+    public string? Make { get; set; }
+    public string? Model { get; set; }
+    public int Year { get; set; }
     public int Age { get; set; }
 }
 

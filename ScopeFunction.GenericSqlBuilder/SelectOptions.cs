@@ -12,6 +12,7 @@ public interface ISelectOptions : IOptions
     ISelectOptions WithProperties(IEnumerable<string> properties);
     ISelectOptions WithoutProperties(IEnumerable<string> properties);
     ISelectOptions WithTop(int value);
+    ISelectOptions WithSplitOn(string splitOn);
 }
 
 public class SelectOptions : Options, ISelectOptions
@@ -37,6 +38,8 @@ public class SelectOptions : Options, ISelectOptions
         
     public bool IsAppendWhere { get; set; }
     public bool IsAppendSelect { get; set; }
+    
+    public string? SplitOn { get; set; }
 
     public ISelectOptions WithPropertyCasing(Casing casing)
     {
@@ -79,7 +82,13 @@ public class SelectOptions : Options, ISelectOptions
         TopValue = value;
         return this;
     }
-        
+
+    public ISelectOptions WithSplitOn(string splitOn)
+    {
+        SplitOn = splitOn;
+        return this;
+    }
+
     /// <summary>
     /// Specifies the prefix which will be appended to the SELECT or WHERE clause.
     /// This method is void and should be placed at the end of the builder
