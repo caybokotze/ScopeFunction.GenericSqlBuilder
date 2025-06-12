@@ -109,7 +109,7 @@ public class InsertStatementTests
                                 .Into("people")
                                 .Build())
                             .To.Throw<InvalidStatementException>()
-                            .With.Message.Containing(Errors.UpdateAndNotUpdateNotAllowed);
+                            .With.Message.Containing(SqlBuilderErrorConstants.UpdateAndNotUpdateNotAllowed);
                     }
                 }
 

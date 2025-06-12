@@ -116,6 +116,9 @@ public class InsertOptions : IInsertOptions
         PropertiesToNotUpdate = new List<string>();
         AddedProperties = new List<string>();
         RemovedProperties = new List<string>();
+        var configuration = GenericQueryBuilderSettings.GenericSqlBuilderConfiguration;
+        Variant = configuration.Variant;
+        PropertyCase = configuration.Casing;
     }
     
     public List<string> AppendAfterIntoStatement { get; }

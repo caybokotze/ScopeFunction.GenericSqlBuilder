@@ -28,7 +28,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
     {
         if (_options is not SelectOptions so)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         if (!so.IsAppendSelect)
@@ -51,7 +51,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
     {
         if (_options is not SelectOptions so)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         if (!so.IsAppendSelect)
@@ -82,7 +82,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
     {
         if (_options is not SelectOptions so)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         if (!so.IsAppendSelect)
@@ -108,7 +108,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
     {
         if (_options is not SelectOptions so)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         if (!so.IsAppendSelect)
@@ -138,7 +138,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
     {
         if (_options is not SelectOptions so)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         var properties = StatementBuilder.GetPropertyNames<T>();
@@ -165,7 +165,7 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
     {
         if (_options is not SelectOptions so)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         if (!so.IsAppendSelect)

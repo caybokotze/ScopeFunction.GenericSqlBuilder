@@ -17,7 +17,7 @@ public class SelectStatement : Statement
     {
         if (_options is not SelectOptions selectOptions)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
         selectOptions.IsAppendSelect = true;
@@ -46,7 +46,7 @@ public class SelectStatement : Statement
     {
         if (_options is not SelectOptions selectOptions)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         if (selectOptions.AppendAfterFromStatement.Count > 0)

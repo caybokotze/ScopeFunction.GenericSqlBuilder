@@ -40,7 +40,7 @@ public class FromStatement : Statement, IBuildable
         return whereOptions.HasAndSeparator switch
         {
             true when whereOptions.HasOrSeparator => throw new InvalidStatementException(
-                Errors.OrAndAndNotAllowed),
+                SqlBuilderErrorConstants.OrAndAndNotAllowed),
             true => "AND",
             false when whereOptions.HasOrSeparator => "OR",
             _ => "OR"
@@ -78,7 +78,7 @@ public class FromStatement : Statement, IBuildable
         if (_options is not SelectOptions selectOptions)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         switch (selectOptions.IsAppendWhere)
@@ -142,7 +142,7 @@ public class FromStatement : Statement, IBuildable
         
         if (_options is not SelectOptions selectOptions)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
         if (!whereOptions.HasOuterGroup)
@@ -199,7 +199,7 @@ public class FromStatement : Statement, IBuildable
         if (_options is not SelectOptions selectOptions)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
         if (!whereOptions.HasOuterGroup)
@@ -260,7 +260,7 @@ public class FromStatement : Statement, IBuildable
         if (_options is not SelectOptions selectOptions)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         var prefix = Helpers.GetPrefix(new WhereOptions(), _options);
@@ -287,7 +287,7 @@ public class FromStatement : Statement, IBuildable
         if (_options is not SelectOptions)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         var whereOptions = new WhereOptions();
@@ -304,7 +304,7 @@ public class FromStatement : Statement, IBuildable
         if (_options is not SelectOptions selectOptions)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         var whereOptions = new WhereOptions();
@@ -333,7 +333,7 @@ public class FromStatement : Statement, IBuildable
         if (_options is not SelectOptions selectOptions)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         var whereOptions = new WhereOptions();

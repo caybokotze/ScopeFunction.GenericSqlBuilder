@@ -1,6 +1,6 @@
 ﻿namespace ScopeFunction.GenericSqlBuilder;
 
-public class Errors
+public class SqlBuilderErrorConstants
 {
     public const string OrAndAndNotAllowed = "When building up a WHERE clause, the options 'HasOrSeparator' and 'HasAndSeparator' can not be used in conjunction";
     public const string PrefixAndNoPrefixNotAllowed = "When building up a WHERE clause, you can not use .WithPrefix() and .WithoutPrefix() simultaneously";

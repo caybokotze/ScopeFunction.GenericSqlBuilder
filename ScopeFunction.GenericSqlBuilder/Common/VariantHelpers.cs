@@ -10,7 +10,7 @@ public class VariantHelpers
         return variant switch
         {
             Variant.Default => "LAST_INSERT_ID() ",
-            Variant.CosmosDb => throw new InvalidStatementException(Errors.CosmosDbLastInsertNotSupported),
+            Variant.CosmosDb => throw new InvalidStatementException(SqlBuilderErrorConstants.CosmosDbLastInsertNotSupported),
             Variant.MsSql => "SCOPE_IDENTITY() ",
             Variant.PostgreSql => $"RETURNING {key} ",
             Variant.MySql => "LAST_INSERT_ID() ",

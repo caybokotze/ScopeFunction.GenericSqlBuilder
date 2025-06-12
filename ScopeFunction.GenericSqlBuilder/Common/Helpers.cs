@@ -9,12 +9,12 @@ public static class Helpers
         if (options is not SelectOptions selectOptions)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
         if (rootOptions is {IgnorePrefix: true, Prefix: not null})
         {
-            throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed);
+            throw new InvalidStatementException(SqlBuilderErrorConstants.PrefixAndNoPrefixNotAllowed);
         }
         
         if (rootOptions.Prefix is not null)
@@ -39,12 +39,12 @@ public static class Helpers
         
         if (selectOptions is not SelectOptions so)
         {
-            throw new InvalidCastException(Errors.SelectOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
         return so switch
         {
-            {IgnorePrefix: true, Prefix: not null} => throw new InvalidStatementException(Errors.PrefixAndNoPrefixNotAllowed),
+            {IgnorePrefix: true, Prefix: not null} => throw new InvalidStatementException(SqlBuilderErrorConstants.PrefixAndNoPrefixNotAllowed),
             {IgnorePrefix: false, Prefix: null} when table is not null => $"{table}.",
             _ => so.Prefix is not null ? $"{so.Prefix}." : string.Empty
         };

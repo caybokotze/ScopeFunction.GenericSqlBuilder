@@ -25,7 +25,7 @@ public class SelectWhereStatement : Statement, IBuildable
         if (_options is not SelectOptions options)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
         
         options.IsAppendWhere = true;
@@ -51,7 +51,7 @@ public class SelectWhereStatement : Statement, IBuildable
         if (_options is not SelectOptions options)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
         options.IsAppendWhere = true;
@@ -188,7 +188,7 @@ public class SelectWhereStatement : Statement, IBuildable
         if (_options is not SelectOptions options)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
         options.IsAppendWhere = true;
@@ -208,7 +208,7 @@ public class SelectWhereStatement : Statement, IBuildable
         if (_options is not SelectOptions options)
         {
             throw new InvalidCastException(
-                Errors.SelectOptionCastException);
+                SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
         options.IsAppendWhere = true;

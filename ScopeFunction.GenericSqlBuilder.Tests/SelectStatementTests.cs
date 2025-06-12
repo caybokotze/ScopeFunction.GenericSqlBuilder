@@ -1082,7 +1082,7 @@ public class SelectStatementTests
                                     .Build())
                                 .To.Throw<InvalidStatementException>()
                                 .With.Message
-                                .Containing(Errors.PrefixAndNoPrefixNotAllowed);
+                                .Containing(SqlBuilderErrorConstants.PrefixAndNoPrefixNotAllowed);
                         }
                     }
 

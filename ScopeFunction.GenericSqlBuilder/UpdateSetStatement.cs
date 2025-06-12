@@ -23,7 +23,7 @@ public class UpdateSetStatement : Statement
     {
         if (_options is not UpdateOptions updateOptions)
         {
-            throw new InvalidCastException(Errors.UpdateOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.UpdateOptionCastException);
         }
         
         AddStatement($"WHERE {clause} ");
@@ -36,7 +36,7 @@ public class UpdateSetStatement : Statement
         
         if (_options is not UpdateOptions)
         {
-            throw new InvalidCastException(Errors.UpdateOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.UpdateOptionCastException);
         }
         
         // todo: apply some prefix / case conversion

@@ -50,7 +50,7 @@ public class Statement
     {
         if (options is not InsertOptions io)
         {
-            throw new InvalidCastException(Errors.InsertOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.InsertOptionCastException);
         }
         
         _insertOptions = io;
@@ -60,7 +60,7 @@ public class Statement
     {
         if (options is not UpdateOptions uo)
         {
-            throw new InvalidCastException(Errors.InsertOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.InsertOptionCastException);
         }
         
         _updateOptions = uo;
@@ -71,7 +71,7 @@ public class Statement
         
         if (options is not SelectOptions so)
         {
-            throw new InvalidCastException(Errors.InsertOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.InsertOptionCastException);
         }
         
         _selectOptions = so;

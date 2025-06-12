@@ -19,12 +19,12 @@ public class InsertStatement : Statement
     {
         if (_options is not InsertOptions io)
         {
-            throw new InvalidCastException(Errors.InsertOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.InsertOptionCastException);
         }
 
         if (io.PropertiesToUpdate.Count > 0 && io.PropertiesToNotUpdate.Count > 0)
         {
-            throw new InvalidStatementException(Errors.UpdateAndNotUpdateNotAllowed);
+            throw new InvalidStatementException(SqlBuilderErrorConstants.UpdateAndNotUpdateNotAllowed);
         }
         
         io.AppendAfterIntoStatement.AddRange(io.AddedProperties);

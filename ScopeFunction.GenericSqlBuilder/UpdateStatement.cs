@@ -36,7 +36,7 @@ public class UpdateStatement : Statement
     {
         if (_options is not UpdateOptions uo)
         {
-            throw new InvalidCastException(Errors.UpdateOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.UpdateOptionCastException);
         }
         
         AddStatement("SET ");
@@ -73,7 +73,7 @@ public class UpdateStatement<T> : Statement where T : new()
     {
         if (_options is not UpdateOptions uo)
         {
-            throw new InvalidCastException(Errors.UpdateOptionCastException);
+            throw new InvalidCastException(SqlBuilderErrorConstants.UpdateOptionCastException);
         }
         
         AddStatement("SET ");
