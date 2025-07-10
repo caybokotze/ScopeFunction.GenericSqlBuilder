@@ -16,8 +16,8 @@
         <Copyright>A product of Merge Digital</Copyright>
         <Description>A package that offers you the ability to quickly build up Generic sql statements for (MySql, MsSql, CosmosDb and PostgreSql)</Description>
         <PackageTags>SQL Builder, MySql, MsSql, CosmosDb, PostGreSql</PackageTags>
-        <PackageReleaseNotes>Fix up append whereIf delegate clause to append correctly and remove string literal prefixing</PackageReleaseNotes>
-        <PackageVersion>1.1.1</PackageVersion>
+        <PackageReleaseNotes>Add support for the `IgnoreProperty` attribute to ignore properties from generic select statements</PackageReleaseNotes>
+        <PackageVersion>1.1.2</PackageVersion>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 

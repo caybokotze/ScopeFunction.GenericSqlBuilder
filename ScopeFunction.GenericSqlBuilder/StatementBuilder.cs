@@ -1,3 +1,5 @@
+using ScopeFunction.GenericSqlBuilder.Attributes;
+
 namespace ScopeFunction.GenericSqlBuilder;
 
 internal static class StatementBuilder 
@@ -26,7 +28,10 @@ internal static class StatementBuilder
     public static List<string> GetPropertyNames<T>() where T : new ()
     {
         var type = typeof(T);
-        return type.GetProperties().Select(property => property.Name).ToList();
+        return type.GetProperties()
+            .Where(property => property.CanRead && property.CanWrite && !property.IsDefined(typeof(IgnorePropertyAttribute), false))
+            .Select(property => property.Name)
+            .ToList();
     }
 
     public static List<string> GetUpdateProperties<T>(UpdateOptions options) where T : new()

@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using NExpect;
 using NUnit.Framework;
+using ScopeFunction.GenericSqlBuilder.Attributes;
 using ScopeFunction.GenericSqlBuilder.Enums;
 using ScopeFunction.GenericSqlBuilder.Exceptions;
 using static NExpect.Expectations;
@@ -2007,6 +2009,17 @@ public class Person
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public int Age { get; set; }
+
+    /// <summary>
+    /// This should be ignored by default because it does not have a 'set' member
+    /// </summary>
+    public int Number { get; } = 45;
+    
+    /// <summary>
+    /// Also should be ignored because of the Attribute.
+    /// </summary>
+    [IgnoreProperty]
+    public string? Address { get; set; }
 }
 
 public class Car
