@@ -332,15 +332,42 @@ public class SelectStatementTests
                             Expect(expected).To.Equal(sut);
                         }
                     }
-                    
-                    [Test]
-                    public void ShouldReturnExpectedResult()
+
+                    [TestFixture]
+                    public class WithAdditionalProperties
                     {
-                        // arrange
-                        
-                        // act
-                        // assert
+                        [Test]
+                        public void ShouldBeScopedToSelectStatement()
+                        {
+                            // arrange
+                            var sut = new SqlBuilder()
+                                .Select<Person>(o =>
+                                {
+                                    o.WithPropertyPrefix("p");
+                                    o.WithProperty("some_property_alias");
+                                })
+                                .AppendSelect(a =>
+                                {
+                                    a.Select<Car>(o =>
+                                    {
+                                        o.WithPropertyPrefix("c");
+                                        o.WithProperty("another_alias");
+                                    });
+                                })
+                                .From("persons p")
+                                .InnerJoin("cars c")
+                                .On("c.person_id = p.id")
+                                .Build();
+                            
+                            // act
+                            const string expected = "SELECT p.FirstName, p.LastName, p.Age, p.some_property_alias, c.Make, c.Model, c.Year, c.Age, c.another_alias FROM persons p INNER JOIN cars c ON c.person_id = p.id";
+                            
+                            // assert
+                            Expect(expected).To.Equal(sut);
+ 
+                        }
                     }
+                    
                 }
             }
 

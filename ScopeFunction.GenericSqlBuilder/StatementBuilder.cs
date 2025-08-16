@@ -21,6 +21,9 @@ internal static class StatementBuilder
         }
 
         typeProperties.AddRange(options.AddedProperties);
+        
+        options.AddedProperties.Clear();
+        options.RemovedProperties.Clear();
 
         return typeProperties;
     }
