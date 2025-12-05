@@ -1,26 +1,74 @@
+using System.Collections.Concurrent;
 using System.Reflection;
+using System.Text;
 using ScopeFunction.GenericSqlBuilder.Attributes;
 using ScopeFunction.GenericSqlBuilder.Enums;
 using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
+/// <summary>
+/// Cached metadata for a property, including its name and optional column name override.
+/// </summary>
+internal sealed class PropertyMetadata
+{
+    public string Name { get; }
+    public string? ColumnNameOverride { get; }
+
+    public PropertyMetadata(string name, string? columnNameOverride)
+    {
+        Name = name;
+        ColumnNameOverride = columnNameOverride;
+    }
+}
+
 internal static class StatementBuilder
 {
+    // Cache for property metadata per type - avoids repeated reflection calls
+    private static readonly ConcurrentDictionary<Type, PropertyMetadata[]> PropertyCache = new();
+
+    // Cache for column name conversions - avoids repeated case conversion for the same property/casing combination
+    private static readonly ConcurrentDictionary<(Type, string, Casing), string> ColumnNameCache = new();
+
     public static string Build(IEnumerable<string> statements)
     {
-        return statements.Aggregate(string.Empty, (current, statement) => current + statement).TrimEnd(' ');
+        var sb = new StringBuilder();
+        foreach (var statement in statements)
+        {
+            sb.Append(statement);
+        }
+
+        // Trim trailing space
+        while (sb.Length > 0 && sb[sb.Length - 1] == ' ')
+        {
+            sb.Length--;
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Gets cached property metadata for a type. This is called once per type and cached.
+    /// </summary>
+    private static PropertyMetadata[] GetCachedPropertyMetadata(Type type)
+    {
+        return PropertyCache.GetOrAdd(type, t =>
+            t.GetProperties()
+                .Where(property => property.CanRead && property.CanWrite && !property.IsDefined(typeof(IgnorePropertyAttribute), false))
+                .Select(property => new PropertyMetadata(
+                    property.Name,
+                    property.GetCustomAttribute<ColumnNameAttribute>()?.Name))
+                .ToArray());
     }
 
     public static List<string> GetSelectProperties<T>(SelectOptions options) where T : class, new()
     {
         var typeProperties = GetPropertyNames<T>();
 
-        foreach (var item in options.RemovedProperties
-                     .Where(item => typeProperties
-                         .Contains(item)))
+        if (options.RemovedProperties.Count > 0)
         {
-            typeProperties.Remove(item);
+            var removedSet = new HashSet<string>(options.RemovedProperties);
+            typeProperties.RemoveAll(item => removedSet.Contains(item));
         }
 
         typeProperties.AddRange(options.AddedProperties);
@@ -31,24 +79,25 @@ internal static class StatementBuilder
         return typeProperties;
     }
 
-    public static List<string> GetPropertyNames<T>() where T : new ()
+    public static List<string> GetPropertyNames<T>() where T : new()
     {
-        var type = typeof(T);
-        return type.GetProperties()
-            .Where(property => property.CanRead && property.CanWrite && !property.IsDefined(typeof(IgnorePropertyAttribute), false))
-            .Select(property => property.Name)
-            .ToList();
+        var metadata = GetCachedPropertyMetadata(typeof(T));
+        var result = new List<string>(metadata.Length);
+        foreach (var prop in metadata)
+        {
+            result.Add(prop.Name);
+        }
+        return result;
     }
 
     public static List<string> GetUpdateProperties<T>(UpdateOptions options) where T : new()
     {
         var typeProperties = GetPropertyNames<T>();
 
-        foreach (var item in options.RemovedProperties
-                     .Where(item => typeProperties
-                         .Contains(item)))
+        if (options.RemovedProperties.Count > 0)
         {
-            typeProperties.Remove(item);
+            var removedSet = new HashSet<string>(options.RemovedProperties);
+            typeProperties.RemoveAll(item => removedSet.Contains(item));
         }
 
         typeProperties.AddRange(options.AddedProperties);
@@ -58,30 +107,36 @@ internal static class StatementBuilder
 
     /// <summary>
     /// Gets the column name for a property, checking for ColumnNameAttribute first,
-    /// then falling back to case conversion.
+    /// then falling back to case conversion. Results are cached.
     /// </summary>
-    public static string GetColumnName(Type type, string propertyName, Casing casing)
+    public static string GetColumnName(Type? type, string propertyName, Casing casing)
     {
-        var property = type.GetProperty(propertyName);
-
-        if (property is null)
+        if (type is null)
         {
             return ConvertCase(propertyName, casing);
         }
 
-        var columnNameAttribute = property.GetCustomAttribute<ColumnNameAttribute>();
-
-        if (columnNameAttribute is not null)
+        return ColumnNameCache.GetOrAdd((type, propertyName, casing), key =>
         {
-            return columnNameAttribute.Name;
-        }
+            var (t, propName, c) = key;
+            var metadata = GetCachedPropertyMetadata(t);
 
-        return ConvertCase(propertyName, casing);
+            foreach (var prop in metadata)
+            {
+                if (prop.Name == propName)
+                {
+                    return prop.ColumnNameOverride ?? ConvertCase(propName, c);
+                }
+            }
+
+            // Property not found in metadata (might be dynamically added), fall back to case conversion
+            return ConvertCase(propName, c);
+        });
     }
 
     /// <summary>
     /// Gets the column name for a property, checking for ColumnNameAttribute first,
-    /// then falling back to case conversion.
+    /// then falling back to case conversion. Results are cached.
     /// </summary>
     public static string GetColumnName<T>(string propertyName, Casing casing) where T : new()
     {
