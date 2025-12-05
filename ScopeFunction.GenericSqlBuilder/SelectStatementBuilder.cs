@@ -84,80 +84,80 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
         {
             throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
-        
+
         if (!so.IsAppendSelect)
         {
             AddStatement("SELECT ");
 
             var propList = properties(new T());
-            
+
             return new SelectStatement(this, new SelectOptions
             {
                 AppendAfterFromStatement = new List<AppendableAfterFrom>
                 {
-                    new(propList)
+                    new(propList, null, typeof(T))
                 }
             });
         }
 
-        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), so.Prefix, typeof(T)));
         return new SelectStatement(this, so);
     }
-    
+
     public SelectStatement Select<T>(Func<T, string[]> properties, Action<ISelectOptions> options) where T : class, new()
     {
         if (_options is not SelectOptions so)
         {
             throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
-        
+
         if (!so.IsAppendSelect)
         {
             var selectOptions = new SelectOptions();
             options(selectOptions);
 
-            selectOptions.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), selectOptions.Prefix));
-        
+            selectOptions.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), selectOptions.Prefix, typeof(T)));
+
             var sql = "SELECT ";
             if (selectOptions.TopValue is not null)
             {
                 sql = $"SELECT TOP {selectOptions.TopValue.ToString()} ";
             }
-            
+
             AddStatement(sql);
             return new SelectStatement(this, selectOptions);
         }
 
         options(_options);
 
-        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties(new T()), so.Prefix, typeof(T)));
         return new SelectStatement(this, so);
     }
-    
+
     public SelectStatement Select<T>() where T : class, new ()
     {
         if (_options is not SelectOptions so)
         {
             throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
-        
+
         var properties = StatementBuilder.GetPropertyNames<T>();
-        
+
         if (!so.IsAppendSelect)
         {
             var selectOptions = new SelectOptions
             {
                 AppendAfterFromStatement = new List<AppendableAfterFrom>
                 {
-                    new(properties.ToArray())
+                    new(properties.ToArray(), null, typeof(T))
                 }
             };
-        
+
             AddStatement("SELECT ");
             return new SelectStatement(this, selectOptions);
         }
 
-        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties.ToArray(), so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(properties.ToArray(), so.Prefix, typeof(T)));
         return new SelectStatement(this, so);
     }
 
@@ -167,14 +167,14 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
         {
             throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
-        
+
         if (!so.IsAppendSelect)
         {
             var selectOptions = new SelectOptions();
             options(selectOptions);
-        
+
             var sql = "SELECT ";
-        
+
             if (selectOptions.TopValue is not null)
             {
                 sql = $"SELECT TOP {selectOptions.TopValue.ToString()} ";
@@ -185,14 +185,14 @@ public class SelectStatementBuilder : Statement, ISelectStatementBuilder
             selectOptions
                 .AppendAfterFromStatement
                 .Add(new AppendableAfterFrom(StatementBuilder.GetSelectProperties<T>(selectOptions).ToArray(),
-                    selectOptions.Prefix));
-            
+                    selectOptions.Prefix, typeof(T)));
+
             return new SelectStatement(this, selectOptions);
         }
 
         options(_options);
 
-        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(StatementBuilder.GetSelectProperties<T>(so).ToArray(), so.Prefix));
+        so.AppendAfterFromStatement.Add(new AppendableAfterFrom(StatementBuilder.GetSelectProperties<T>(so).ToArray(), so.Prefix, typeof(T)));
         return new SelectStatement(this, so);
     }
 }

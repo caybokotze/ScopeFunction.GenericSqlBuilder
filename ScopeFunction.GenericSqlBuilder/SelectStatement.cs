@@ -21,12 +21,12 @@ public class SelectStatement : Statement
         }
 
         selectOptions.IsAppendSelect = true;
-        
+
         var selectStatementBuilder = new SelectStatementBuilder(this, selectOptions);
         append(selectStatementBuilder);
         return this;
     }
-    
+
     public SelectStatement Append(string clause, bool withTrailingComma = false)
     {
         if (withTrailingComma)
@@ -48,18 +48,19 @@ public class SelectStatement : Statement
         {
             throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
-        
+
         if (selectOptions.AppendAfterFromStatement.Count > 0)
         {
             foreach (var appendableAfterFrom in selectOptions.AppendAfterFromStatement)
             {
                 if (selectOptions.SplitOn is not null)
                 {
+                    var splitOnColumnName = GetColumnName(appendableAfterFrom.SourceType, selectOptions.SplitOn, selectOptions.PropertyCase);
                     AddStatement(
-                        $"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(ConvertCase(selectOptions.SplitOn, selectOptions.PropertyCase), selectOptions.Variant)}");
+                        $"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(splitOnColumnName, selectOptions.Variant)}");
                     AddStatement(", ");
                 }
-                
+
                 foreach (var property in appendableAfterFrom.Properties)
                 {
                     if (selectOptions.SplitOn is not null)
@@ -67,25 +68,36 @@ public class SelectStatement : Statement
                         if (property.Equals(selectOptions.SplitOn, StringComparison.InvariantCultureIgnoreCase))
                         {
                             continue;
-                        }    
+                        }
                     }
-                    
-                    AddStatement($"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(ConvertCase(property, selectOptions.PropertyCase), selectOptions.Variant)}");
+
+                    var columnName = GetColumnName(appendableAfterFrom.SourceType, property, selectOptions.PropertyCase);
+                    AddStatement($"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(columnName, selectOptions.Variant)}");
                     AddStatement(", ");
                 }
             }
-            
+
             RemoveLast();
             AddStatement(" ");
         }
-        
+
         AddStatement($"FROM {table} ");
 
         if (selectOptions.Prefix is null)
         {
             _options.WithPropertyPrefix(table);
         }
-        
+
         return new FromStatement(this, _options);
+    }
+
+    private static string GetColumnName(Type? sourceType, string propertyName, Enums.Casing casing)
+    {
+        if (sourceType is null)
+        {
+            return ConvertCase(propertyName, casing);
+        }
+
+        return StatementBuilder.GetColumnName(sourceType, propertyName, casing);
     }
 }

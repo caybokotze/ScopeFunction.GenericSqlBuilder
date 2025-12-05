@@ -1,8 +1,11 @@
+using System.Reflection;
 using ScopeFunction.GenericSqlBuilder.Attributes;
+using ScopeFunction.GenericSqlBuilder.Enums;
+using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
 
 namespace ScopeFunction.GenericSqlBuilder;
 
-internal static class StatementBuilder 
+internal static class StatementBuilder
 {
     public static string Build(IEnumerable<string> statements)
     {
@@ -21,7 +24,7 @@ internal static class StatementBuilder
         }
 
         typeProperties.AddRange(options.AddedProperties);
-        
+
         options.AddedProperties.Clear();
         options.RemovedProperties.Clear();
 
@@ -51,5 +54,37 @@ internal static class StatementBuilder
         typeProperties.AddRange(options.AddedProperties);
 
         return typeProperties;
+    }
+
+    /// <summary>
+    /// Gets the column name for a property, checking for ColumnNameAttribute first,
+    /// then falling back to case conversion.
+    /// </summary>
+    public static string GetColumnName(Type type, string propertyName, Casing casing)
+    {
+        var property = type.GetProperty(propertyName);
+
+        if (property is null)
+        {
+            return ConvertCase(propertyName, casing);
+        }
+
+        var columnNameAttribute = property.GetCustomAttribute<ColumnNameAttribute>();
+
+        if (columnNameAttribute is not null)
+        {
+            return columnNameAttribute.Name;
+        }
+
+        return ConvertCase(propertyName, casing);
+    }
+
+    /// <summary>
+    /// Gets the column name for a property, checking for ColumnNameAttribute first,
+    /// then falling back to case conversion.
+    /// </summary>
+    public static string GetColumnName<T>(string propertyName, Casing casing) where T : new()
+    {
+        return GetColumnName(typeof(T), propertyName, casing);
     }
 }

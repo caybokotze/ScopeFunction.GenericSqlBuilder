@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using ScopeFunction.GenericSqlBuilder.Common;
+using ScopeFunction.GenericSqlBuilder.Enums;
 using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
 using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
 
@@ -15,7 +16,7 @@ public class UpdateStatement : Statement
     {
         _options = options;
     }
-    
+
     /// <summary>
     /// Verbatim Set. If options were provided they will not take effect.
     /// </summary>
@@ -38,19 +39,30 @@ public class UpdateStatement : Statement
         {
             throw new InvalidCastException(SqlBuilderErrorConstants.UpdateOptionCastException);
         }
-        
+
         AddStatement("SET ");
-        
+
         foreach (var segment in properties)
         {
-            AddStatement($"{GetPropertyVariant(ConvertCase(segment, uo.PropertyCase), uo.Variant)} = @{segment}");
+            var columnName = GetColumnName(uo.SourceType, segment, uo.PropertyCase);
+            AddStatement($"{GetPropertyVariant(columnName, uo.Variant)} = @{segment}");
             AddStatement(", ");
         }
-        
+
         RemoveLast();
         AddStatement(" ");
-        
+
         return new UpdateSetStatement(this, _options);
+    }
+
+    private static string GetColumnName(Type? sourceType, string propertyName, Casing casing)
+    {
+        if (sourceType is null)
+        {
+            return ConvertCase(propertyName, casing);
+        }
+
+        return StatementBuilder.GetColumnName(sourceType, propertyName, casing);
     }
 }
 
@@ -75,9 +87,9 @@ public class UpdateStatement<T> : Statement where T : new()
         {
             throw new InvalidCastException(SqlBuilderErrorConstants.UpdateOptionCastException);
         }
-        
+
         AddStatement("SET ");
-        
+
         var properties = StatementBuilder.GetUpdateProperties<T>(uo);
 
         foreach (var property in properties)
@@ -86,14 +98,15 @@ public class UpdateStatement<T> : Statement where T : new()
             {
                 continue;
             }
-            
-            AddStatement($"{GetPropertyVariant(ConvertCase(property, uo.PropertyCase), uo.Variant)} = @{property}");
+
+            var columnName = StatementBuilder.GetColumnName<T>(property, uo.PropertyCase);
+            AddStatement($"{GetPropertyVariant(columnName, uo.Variant)} = @{property}");
             AddStatement(", ");
         }
-        
+
         RemoveLast();
         AddStatement(" ");
-        
+
         return new UpdateSetStatement(this, _options);
     }
 }

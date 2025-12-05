@@ -60,6 +60,11 @@ public interface IInsertOptions<T> : IInsertOptions
 
 public class InsertOptions<T> : InsertOptions, IInsertOptions<T>
 {
+    public InsertOptions()
+    {
+        SourceType = typeof(T);
+    }
+
     public IInsertOptions WithUpdateOnDuplicateKey(params Expression<Func<T, object?>>[] properties)
     {
         foreach (var segment in properties)
@@ -120,7 +125,7 @@ public class InsertOptions : IInsertOptions
         Variant = configuration.Variant;
         PropertyCase = configuration.Casing;
     }
-    
+
     public List<string> AppendAfterIntoStatement { get; }
     public List<string> PropertiesToUpdate { get; }
     public List<string> PropertiesToNotUpdate { get; }
@@ -131,6 +136,7 @@ public class InsertOptions : IInsertOptions
     public bool UpdateOnDuplicateKey { get; protected set; }
     public Casing PropertyCase { get; private set; }
     public Variant Variant { get; private set; }
+    public Type? SourceType { get; protected set; }
 
     public IInsertOptions WithSqlVariant(Variant variant)
     {

@@ -17,7 +17,7 @@
         <Description>A package that offers you the ability to quickly build up Generic sql statements for (MySql, MsSql, CosmosDb and PostgreSql)</Description>
         <PackageTags>SQL Builder, MySql, MsSql, CosmosDb, PostGreSql</PackageTags>
         <PackageReleaseNotes>Added a fix for additional properties per select group to clear after being appended. This was fixed because it was causing an issue where select statements were staying appended after being added/removed even in the next select group.</PackageReleaseNotes>
-        <PackageVersion>1.1.4</PackageVersion>
+        <PackageVersion>1.1.5</PackageVersion>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 
@@ -42,6 +42,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="PeanutButter.Utils" Version="3.0.96" />
+      <PackageReference Include="PeanutButter.Utils" Version="3.0.409" />
     </ItemGroup>
 </Project>

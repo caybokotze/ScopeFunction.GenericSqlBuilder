@@ -26,6 +26,11 @@ public interface IUpdateOptions<T> : IUpdateOptions
 
 public class UpdateOptions<T> : UpdateOptions, IUpdateOptions<T>
 {
+    public UpdateOptions()
+    {
+        SourceType = typeof(T);
+    }
+
     public IUpdateOptions<T> WithoutProperties(params Expression<Func<T, object?>>[] properties)
     {
         foreach (var segment in properties)
@@ -82,12 +87,13 @@ public class UpdateOptions : IUpdateOptions
         PropertyCase = configuration.Casing;
         Table = string.Empty;
     }
-    
+
     public List<string> RemovedProperties { get; private set; }
     public List<string> AddedProperties { get; private set; }
     public Casing PropertyCase { get; private set; }
     public Variant Variant { get; private set; }
     public string Table { get; set; }
+    public Type? SourceType { get; protected set; }
     
     
     public IUpdateOptions WithSqlVariant(Variant variant)

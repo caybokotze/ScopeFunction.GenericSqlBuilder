@@ -1,4 +1,5 @@
-﻿using ScopeFunction.GenericSqlBuilder.Exceptions;
+﻿using ScopeFunction.GenericSqlBuilder.Enums;
+using ScopeFunction.GenericSqlBuilder.Exceptions;
 using static ScopeFunction.GenericSqlBuilder.Common.CaseConverter;
 using static ScopeFunction.GenericSqlBuilder.Common.VariantHelpers;
 
@@ -26,9 +27,9 @@ public class InsertStatement : Statement
         {
             throw new InvalidStatementException(SqlBuilderErrorConstants.UpdateAndNotUpdateNotAllowed);
         }
-        
+
         io.AppendAfterIntoStatement.AddRange(io.AddedProperties);
-        
+
         AddStatement($"INTO {table} ");
 
         if (io.AppendAfterIntoStatement.Count > 0)
@@ -40,11 +41,12 @@ public class InsertStatement : Statement
                 {
                     continue;
                 }
-                
-                AddStatement($"{GetPropertyVariant(ConvertCase(property, io.PropertyCase), io.Variant)}");
+
+                var columnName = GetColumnName(io.SourceType, property, io.PropertyCase);
+                AddStatement($"{GetPropertyVariant(columnName, io.Variant)}");
                 AddStatement(", ");
             }
-            
+
             RemoveLast();
             AddStatement(")");
             AddStatement(" ");
@@ -61,11 +63,11 @@ public class InsertStatement : Statement
                 {
                     continue;
                 }
-                
+
                 AddStatement($"@{property}");
                 AddStatement(", ");
             }
-            
+
             RemoveLast();
             AddStatement(")");
             AddStatement(" ");
@@ -83,8 +85,9 @@ public class InsertStatement : Statement
                     {
                         continue;
                     }
-                    
-                    AddStatement($"{GetPropertyVariant(ConvertCase(property, io.PropertyCase), io.Variant)} = @{property}");
+
+                    var columnName = GetColumnName(io.SourceType, property, io.PropertyCase);
+                    AddStatement($"{GetPropertyVariant(columnName, io.Variant)} = @{property}");
                     AddStatement(", ");
                 }
             }
@@ -92,27 +95,38 @@ public class InsertStatement : Statement
             if (io.PropertiesToNotUpdate.Count > 0)
             {
                 AddStatement("ON DUPLICATE KEY UPDATE ");
-                
+
                 foreach (var property in io.AppendAfterIntoStatement)
                 {
                     if (io.RemovedProperties.Contains(property))
                     {
                         continue;
                     }
-                    
+
                     if (io.PropertiesToNotUpdate.Contains(property))
                     {
                         continue;
                     }
-                    
-                    AddStatement($"{GetPropertyVariant(ConvertCase(property, io.PropertyCase), io.Variant)} = @{property}");
+
+                    var columnName = GetColumnName(io.SourceType, property, io.PropertyCase);
+                    AddStatement($"{GetPropertyVariant(columnName, io.Variant)} = @{property}");
                     AddStatement(", ");
                 }
             }
         }
-        
+
         RemoveLast();
-        
+
         return new Finalise(_statement, _options);
+    }
+
+    private static string GetColumnName(Type? sourceType, string propertyName, Casing casing)
+    {
+        if (sourceType is null)
+        {
+            return ConvertCase(propertyName, casing);
+        }
+
+        return StatementBuilder.GetColumnName(sourceType, propertyName, casing);
     }
 }
