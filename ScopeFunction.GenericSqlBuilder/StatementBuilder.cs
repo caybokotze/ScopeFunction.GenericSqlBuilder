@@ -39,7 +39,7 @@ internal static class StatementBuilder
         }
 
         // Trim trailing space
-        while (sb.Length > 0 && sb[sb.Length - 1] == ' ')
+        while (sb.Length > 0 && sb[^1] == ' ')
         {
             sb.Length--;
         }

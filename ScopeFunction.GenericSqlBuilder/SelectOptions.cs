@@ -22,14 +22,16 @@ public class SelectOptions : Options, ISelectOptions
         AddedProperties = new List<string>();
         RemovedProperties = new List<string>();
         AppendAfterFromStatement = new List<AppendableAfterFrom>();
+        AppendedClauses = new List<(string Clause, bool WithTrailingComma)>();
         var configuration = GenericQueryBuilderSettings.GenericSqlBuilderConfiguration;
         Variant = configuration.Variant;
         PropertyCase = configuration.Casing;
     }
-    
+
     public List<string> AddedProperties { get; }
     public List<string> RemovedProperties { get; }
     public List<AppendableAfterFrom> AppendAfterFromStatement { get; set; }
+    public List<(string Clause, bool WithTrailingComma)> AppendedClauses { get; }
     public Casing PropertyCase { get; private set; }
         
     public Variant Variant { get; private set; }

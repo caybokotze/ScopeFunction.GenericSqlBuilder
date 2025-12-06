@@ -29,16 +29,12 @@ public class SelectStatement : Statement
 
     public SelectStatement Append(string clause, bool withTrailingComma = false)
     {
-        if (withTrailingComma)
+        if (_options is not SelectOptions selectOptions)
         {
-            AddStatement($"{clause}, ");
+            throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
-        if (!withTrailingComma)
-        {
-            AddStatement($"{clause} ");
-        }
-
+        selectOptions.AppendedClauses.Add((clause, withTrailingComma));
         return this;
     }
 
@@ -49,7 +45,11 @@ public class SelectStatement : Statement
             throw new InvalidCastException(SqlBuilderErrorConstants.SelectOptionCastException);
         }
 
-        if (selectOptions.AppendAfterFromStatement.Count > 0)
+        var hasProperties = selectOptions.AppendAfterFromStatement.Count > 0;
+        var hasAppendedClauses = selectOptions.AppendedClauses.Count > 0;
+        var addedAnyColumns = false;
+
+        if (hasProperties)
         {
             foreach (var appendableAfterFrom in selectOptions.AppendAfterFromStatement)
             {
@@ -59,6 +59,7 @@ public class SelectStatement : Statement
                     AddStatement(
                         $"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(splitOnColumnName, selectOptions.Variant)}");
                     AddStatement(", ");
+                    addedAnyColumns = true;
                 }
 
                 foreach (var property in appendableAfterFrom.Properties)
@@ -74,9 +75,25 @@ public class SelectStatement : Statement
                     var columnName = GetColumnName(appendableAfterFrom.SourceType, property, selectOptions.PropertyCase);
                     AddStatement($"{GetPrefix(selectOptions, table, appendableAfterFrom.Prefix)}{GetPropertyVariant(columnName, selectOptions.Variant)}");
                     AddStatement(", ");
+                    addedAnyColumns = true;
                 }
             }
+        }
 
+        // Process appended clauses after properties
+        if (hasAppendedClauses)
+        {
+            foreach (var (clause, withTrailingComma) in selectOptions.AppendedClauses)
+            {
+                AddStatement(clause);
+                AddStatement(", ");
+                addedAnyColumns = true;
+            }
+        }
+
+        // Remove trailing comma and add single space before FROM
+        if (addedAnyColumns)
+        {
             RemoveLast();
             AddStatement(" ");
         }

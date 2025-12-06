@@ -16,8 +16,8 @@
         <Copyright>A product of Merge Digital</Copyright>
         <Description>A package that offers you the ability to quickly build up Generic sql statements for (MySql, MsSql, CosmosDb and PostgreSql)</Description>
         <PackageTags>SQL Builder, MySql, MsSql, CosmosDb, PostGreSql</PackageTags>
-        <PackageReleaseNotes>Added a fix for additional properties per select group to clear after being appended. This was fixed because it was causing an issue where select statements were staying appended after being added/removed even in the next select group.</PackageReleaseNotes>
-        <PackageVersion>1.1.5</PackageVersion>
+        <PackageReleaseNotes>Made some dramatic performance improvements in the statement builder to make sure the string sections are being concatinated as fast as possible. Added support for [ColumnName("explicit")] mappings.</PackageReleaseNotes>
+        <PackageVersion>1.2.0</PackageVersion>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 

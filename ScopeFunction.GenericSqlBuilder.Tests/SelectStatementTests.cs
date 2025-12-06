@@ -866,7 +866,7 @@ public class SelectStatementTests
                     .Build();
                 // act
                 // assert
-                Expect(sql).To.Equal("SELECT (SELECT COUNT(*) FROM people) as person_count, p.first_name, p.last_name, p.age, m.role_id FROM people LEFT JOIN managers ON p.id = m.person_id WHERE p.id = @PersonId AND p.date_created BETWEEN DATE(@DateFrom) AND DATE(@DateTo) AND p.person_status = @PersonStatus ORDER BY p.date_modified DESC");
+                Expect(sql).To.Equal("SELECT p.first_name, p.last_name, p.age, m.role_id, (SELECT COUNT(*) FROM people) as person_count FROM people LEFT JOIN managers ON p.id = m.person_id WHERE p.id = @PersonId AND p.date_created BETWEEN DATE(@DateFrom) AND DATE(@DateTo) AND p.person_status = @PersonStatus ORDER BY p.date_modified DESC");
             }
         }
 
